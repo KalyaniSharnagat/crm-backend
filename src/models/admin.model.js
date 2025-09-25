@@ -15,8 +15,8 @@ const Crm = sequelize.define("Crm", {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        validate: { isEmail: true },
+        // unique: true,
+        // validate: { isEmail: true },
     },
     mobile: {
         type: DataTypes.STRING,
@@ -30,14 +30,14 @@ const Crm = sequelize.define("Crm", {
     //     type: DataTypes.ENUM("admin", "superadmin"),
     //     defaultValue: "admin",
     // },
-    resetToken: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    resetTokenExpiry: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
+    // resetToken: {
+    //     type: DataTypes.STRING,
+    //     allowNull: true,
+    // },
+    // resetTokenExpiry: {
+    //     type: DataTypes.DATE,
+    //     allowNull: true,
+    // },
 },
     {
         tableName: "crm",
