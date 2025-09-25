@@ -1,6 +1,8 @@
 const { Sequelize } = require("sequelize");
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 
+// PostgreSQL connection
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: "postgres",
     dialectOptions: {
@@ -13,32 +15,30 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 const connectDB = async () => {
     try {
         await sequelize.authenticate();
-        console.log("✅ Connected to Neon PostgreSQL successfully.");
+        console.log("✅ PostgreSQL connected successfully.");
     } catch (error) {
-        console.error("❌ Unable to connect to Neon PostgreSQL:", error.message);
-        process.exit(1);
+        console.error("❌ Unable to connect to PostgreSQL:", error.message);
     }
 };
 
-// Create tables (optional, dev mode)
-const createTables = async (options = { alter: true }) => {
+// Create/Update Tables
+async function createTables() {
     try {
-        await sequelize.sync(options); // alter: true updates tables if needed
-        console.log("✅ All tables created successfully.");
+        await sequelize.sync({ alter: true }); // safe migration
+        console.log("✅ All tables created/updated successfully.");
     } catch (error) {
         console.error("❌ Error creating tables:", error.message);
-        throw error;
     }
-};
+}
 
-// Close connection
-const closeDB = async () => {
+// Close DB
+async function closeDB() {
     try {
         await sequelize.close();
-        console.log("🔌 Neon PostgreSQL connection closed.");
+        console.log("🔌 PostgreSQL connection closed.");
     } catch (error) {
-        console.error("❌ Error closing Neon connection:", error.message);
+        console.error("❌ Error closing PostgreSQL connection:", error.message);
     }
-};
+}
 
 module.exports = { sequelize, connectDB, createTables, closeDB };
