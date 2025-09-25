@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const adminService = require("../../services/admin.service");
-const generateAdminJWT = require("../../utils/middleware/generate-admin-token");
+const authenticateAdminJWT = require("../../utils/middleware/generate-admin-token");
 const { adminLoginValidationSchema } = require("../../utils/validation/admin.validation");
 
 
@@ -37,7 +37,7 @@ const login = async (request, response) => {
         }
 
         // 5. Generate JWT
-        const token = generateAdminJWT(isUserExist.id, isUserExist.username, isUserExist.email, isUserExist.mobile);
+        const token = authenticateAdminJWT(isUserExist.id, isUserExist.username, isUserExist.email, isUserExist.mobile);
         if (!token) {
             return response.status(200).json({
                 status: "FAILED",

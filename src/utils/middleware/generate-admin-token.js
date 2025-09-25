@@ -1,17 +1,8 @@
 const jwt = require("jsonwebtoken");
 
-const generateAdminJWT = (id, username, email, mobile) => {
-    try {
-        const token = jwt.sign(
-            { id, username, email, mobile },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" } // token valid for 1 day
-        );
-        return token;
-    } catch (error) {
-        console.error("Error generating admin token:", error);
-        return null;
-    }
-};
+const secretKey = process.env.JWT_SECRET_KEY;
 
-module.exports = generateAdminJWT;
+
+module.exports = function generateAdminJWT(adminId, name, email, mobile) {
+    return jwt.sign({ adminId, name, email, mobile }, secretKey, { expiresIn: process.env.JWT_EXPIRE_TIME });
+}
