@@ -19,3 +19,34 @@ exports.adminIdValidationSchema = Joi.object({
     adminId: Joi.number().integer().positive().required().messages({ "number.base": "Admin ID must be a number", "number.integer": "Admin ID must be an integer", "number.positive": "Admin ID must be a positive number", "any.required": "Admin ID is required", }),
 });
 
+
+//?========================lead================================
+
+exports.createLeadValidationSchema = Joi.object({
+    name: Joi.string().min(3).max(50).required().messages({
+        "string.base": "Name must be a text",
+        "string.empty": "Name cannot be empty",
+        "string.min": "Name should have at least 3 characters",
+        "any.required": "Name is required",
+    }),
+    email: Joi.string().email().required().messages({
+        "string.email": "Invalid email format",
+        "any.required": "Email is required",
+    }),
+    phone: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
+        "string.pattern.base": "Phone must be a valid 10-digit number",
+        "any.required": "Phone is required",
+    }),
+    company: Joi.string().max(100).allow("").optional(),
+    status: Joi.string().valid('New', 'Contacted', 'Positive', 'Lost').required(),
+    assignedTo: Joi.string().allow(null, "").optional(),
+});
+
+
+exports.leadIdValidationSchema = Joi.object({
+    id: Joi.number().integer().required().messages({
+        "number.base": "Lead ID must be a number",
+        "number.integer": "Lead ID must be an integer",
+        "any.required": "Lead ID is required",
+    }),
+});
