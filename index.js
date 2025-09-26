@@ -76,12 +76,10 @@ process.on('SIGINT', async () => {
 });
 
 // Connect DB & Create Tables
-// connectDB().then(() => {
-    // createTables();
-// });
+
 (async () => {
     await connectDB();
-    // await createTables(); // ✅ ensures tables exist
+    // await createTables(); // ensures tables exist
 })();
 
 // listen on PORT

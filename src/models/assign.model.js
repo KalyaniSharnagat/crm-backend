@@ -1,10 +1,11 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/db");
 
-const Lead = sequelize.define('Lead', {
+const Assign = sequelize.define('Assign', {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true, autoIncrement: true
+        autoIncrement: true,
+        primaryKey: true
     },
     name: {
         type: DataTypes.STRING,
@@ -25,39 +26,35 @@ const Lead = sequelize.define('Lead', {
     leadSource: {
         type: DataTypes.ENUM('Website', 'Referral', 'Cold Call', 'Other'), defaultValue: 'Other'
     },
-    status: {
-        type: DataTypes.ENUM('New', 'Contacted', 'Positive', 'Lost'),
-        defaultValue: 'New'
-    },
-
-    assignedTo: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    notes: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    projectName: {
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    interestPercentage: {
-        type: DataTypes.INTEGER, // 0 - 100
-        allowNull: true,
-        validate: {
-            min: 0,
-            max: 100,
-            isInt: { msg: "Interest percentage must be an integer between 0 and 100" }
+    leadId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: "Leads",
+            key: "id"
         }
     },
+    assignedTo: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    assignedDate: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+    status: {
+        type: DataTypes.ENUM("Pending", "In Progress", "Completed"),
+        defaultValue: "Pending"
+    }
 }, {
-    tableName: "lead",
+    tableName: "assign",
+    freezeTableName: true,
     timestamps: true,
     defaultScope: {
         raw: true   // this makes all queries return plain JSON
     }
 });
-
-// a
-module.exports = Lead;
+Assign.associate = (models) => {
+    Assign.belongsTo(models.Lead, { foreignKey: "leadId", as: "lead", onDelete: "CASCADE", onUpdate: "CASCADE" });
+}
+module.exports = Assign;

@@ -4,11 +4,11 @@ const { createLeadValidationSchema } = require("../../utils/validation/admin.val
 const createLead = async (request, response) => {
     try {
         // Extract data from request body
-        const { name, email, phone, company, status, assignedTo } = request.body;
+        const { name, email, mobile, company, status, assignedTo,leadSource,notes,projectName,interestPercentage } = request.body;
 
         // ================= Validation =================
         const validationResult = createLeadValidationSchema.validate(
-            { name, email, phone, company, status, assignedTo },
+            { name, email, mobile, company, status, assignedTo,leadSource,notes,projectName,interestPercentage},
             { abortEarly: true }
         );
         if (validationResult.error) {
@@ -31,10 +31,14 @@ const createLead = async (request, response) => {
         const dataToInsert = {
             name,
             email,
-            phone,
+            mobile,
             company,
             status: status || "new", // default status
             assignedTo: assignedTo || null,
+            leadSource,
+            notes,
+            projectName,
+            interestPercentage
         };
 
         const result = await leadServices.createLead(dataToInsert);
@@ -42,13 +46,13 @@ const createLead = async (request, response) => {
         if (result) {
             return response.status(200).json({
                 status: "SUCCESS",
-                message: "Lead created successfully",
+                message: "Lead add successfully",
                 data: result,
             });
         } else {
             return response.status(200).json({
                 status: "FAILED",
-                message: "Failed to create Lead, please try again",
+                message: "Failed to add Lead, please try again",
             });
         }
     } catch (error) {
