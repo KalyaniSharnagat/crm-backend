@@ -10,7 +10,7 @@ exports.createAdminValidationSchema = Joi.object({
 });
 
 
-exports.adminLoginValidationSchema = Joi.object({
+exports.loginValidationSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
 });
@@ -49,4 +49,45 @@ exports.leadIdValidationSchema = Joi.object({
         "number.integer": "Lead ID must be an integer",
         "any.required": "Lead ID is required",
     }),
+});
+
+
+
+//?========================quotation================================
+exports.createQuotationValidationSchema = Joi.object({
+    quotationNo: Joi.string().min(3).max(20).required(),
+    clientName: Joi.string().min(3).max(50).required(),
+    clientCompany: Joi.string().max(100).allow("").optional(),
+    validUntil: Joi.date().greater('now').required(),
+    amount: Joi.number().positive().required(),
+    items: Joi.array().items(
+        Joi.object({
+            itemName: Joi.string().min(3).max(100).required(),
+            description: Joi.string().min(3).max(200).required(),
+            quantity: Joi.number().integer().positive().required(),
+            price: Joi.number().positive().required(),
+        })
+    ).min(1).required(),
+    status: Joi.string().valid('Draft', 'Sent', 'Accepted', 'Declined').required(),
+});
+
+exports.quotationIdValidationSchema = Joi.object({
+    id: Joi.number().integer().required(),
+});
+exports.updateQuotationValidationSchema = Joi.object({
+    id: Joi.number().integer().required(),
+    quotationNo: Joi.string().min(3).max(20).optional(),
+    clientName: Joi.string().min(3).max(50).optional(),
+    clientCompany: Joi.string().max(100).allow("").optional(),
+    validUntil: Joi.date().greater('now').optional(),
+    amount: Joi.number().positive().optional(),
+    items: Joi.array().items(
+        Joi.object({
+            itemName: Joi.string().min(3).max(100).optional(),
+            description: Joi.string().min(3).max(200).optional(),
+            quantity: Joi.number().integer().positive().optional(),
+            price: Joi.number().positive().optional(),
+        })
+    ).min(1).optional(),
+    status: Joi.string().valid('Draft', 'Sent', 'Accepted', 'Declined').optional(),
 });

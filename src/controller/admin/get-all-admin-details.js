@@ -1,38 +1,32 @@
-const adminService = require("../../services/admin.service");
+const adminServices = require("../../services/admin.service");
 
-const getAllAdminDetails = async (req, res) => {
+const getAdminDetails = async (request, response) => {
     try {
-        // ========== Fetch all admins ==========
-        const admins = await adminService.getAllAdmins();
 
-        if (admins && admins.length > 0) {
-            return res.status(200).json({
+        //get data from db & send response to client
+        const admin = await adminServices.getAdminDetails();
+        if (admin?.length > 0) {
+            response.status(200).json({
                 status: "SUCCESS",
-                message: "Admin details fetched successfully",
-                data: admins.map(admin => ({
-                    id: admin.id,
-                    username: admin.username,
-                    email: admin.email,
-                    mobile: admin.mobile,
-                    // isActive: admin.isActive,
-                })),
+                message: "Admin user fetch successfully",
+                admin
             });
+            return;
         } else {
-            return res.status(404).json({
+            response.status(200).json({
                 status: "FAILED",
-                message: "No admins found",
-                data: [],
+                message: "Admin user not available",
             });
+            return;
         }
-
     } catch (error) {
-        console.error("Server Error:", error);
-        return res.status(500).json({
+        response.status(500).json({
             status: "FAILED",
-            message: "Internal Server Error",
-            error: error.message,
+            message: error.message,
         });
+        return;
     }
 };
 
-module.exports = getAllAdminDetails;
+
+module.exports = getAdminDetails;

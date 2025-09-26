@@ -1,69 +1,69 @@
+
 const bcrypt = require("bcrypt");
+const { loginValidationSchema } = require("../../utils/validation/admin.validation");
+const generateAdminJWT = require("../../utils/middleware/generate-admin-token");
 const adminService = require("../../services/admin.service");
-const authenticateAdminJWT = require("../../utils/middleware/generate-admin-token");
-const { adminLoginValidationSchema } = require("../../utils/validation/admin.validation");
-
-
 const login = async (request, response) => {
     try {
-        // 1. Extract data from request body
+        //extract data from request body
         const { email, password } = request.body;
 
-        // 2. Validation
-        const { error } = adminLoginValidationSchema.validate({ email, password }, { abortEarly: true });
-        if (error) {
-            return response.status(200).json({
+        //check validation
+        const validationResult = await loginValidationSchema.validate({ email, password }, { abortEarly: true });
+        if (validationResult.error) {
+            response.status(200).json({
                 status: "FAILED",
-                message: error?.details[0]?.message,
+                message: validationResult?.error?.details[0]?.message,
             });
-        }
+            return;
+        };
 
-        // 3. Check if user exists
+        //check user exist or not
         const isUserExist = await adminService.getAdminByEmail(email);
         if (!isUserExist) {
             return response.status(200).json({
                 status: "FAILED",
-                message: "Invalid email, check your email & try again!",
-            });
-        }
+                message: "Invalid email, check your email & try again!"
+            })
+        };
 
-        // 4. Compare password
         const matchPassword = await bcrypt.compare(password, isUserExist.password);
         if (!matchPassword) {
             return response.status(200).json({
                 status: "FAILED",
-                message: "Incorrect password, please check your password and try again!",
-            });
+                message: "Incorrect password, please check your password and try again!"
+            })
         }
 
-        // 5. Generate JWT
-        const token = authenticateAdminJWT(isUserExist.id, isUserExist.username, isUserExist.email, isUserExist.mobile);
-        if (!token) {
+        //Check password same or not
+        const token = generateAdminJWT(isUserExist.id, isUserExist.name, isUserExist?.email, isUserExist?.mobile)
+        if (token) {
             return response.status(200).json({
+                status: "SUCCESS",
+                message: "Login Successfully",
+                token,
+                details: {
+                    adminId: isUserExist.id,
+                    username: isUserExist.username,
+                    email: isUserExist.email,
+                    mobile: isUserExist.mobile,
+                }
+            })
+        } else {
+            response.status(200).json({
                 status: "FAILED",
-                message: "Failed to generate token, please try again!",
+                message: "Failed to Login, please again!",
             });
+            return;
         }
-
-        // 6. Success Response
-        return response.status(200).json({
-            status: "SUCCESS",
-            message: "Login Successfully",
-            token,
-            userDetails: {
-                userId: isUserExist.id,
-                username: isUserExist.username,
-                email: isUserExist.email,
-                mobile: isUserExist.mobile,
-            },
-        });
-
     } catch (error) {
-        return response.status(500).json({
+        response.status(500).json({
             status: "FAILED",
             message: error.message,
         });
+        return;
     }
 };
+
 
 module.exports = login;

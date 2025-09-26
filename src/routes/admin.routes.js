@@ -8,6 +8,12 @@ const deleteLead = require("../controller/lead/delete-lead");
 const getLeadById = require("../controller/lead/get-lead-by-id");
 const getLeadList = require("../controller/lead/get-lead-list");
 const updateLead = require("../controller/lead/update-lead");
+const createQuotation = require("../controller/quotation/createQuotation");
+const deleteQuotation = require("../controller/quotation/deleteQuotation");
+const getAllQuotations = require("../controller/quotation/getAllQuotations");
+const getQuotationById = require("../controller/quotation/getQuotationById");
+const getQuotationList = require("../controller/quotation/getQuotationList");
+const updateQuotation = require("../controller/quotation/updateQuotation");
 
 
 const authenticateAdminJwt = require("../utils/middleware/authentication-admin-jwt");
@@ -19,7 +25,7 @@ const adminRouter = require("express").Router();
 adminRouter.post("/login", login);
 adminRouter.post("/create-admin", createAdmin);
 adminRouter.post("/delete-admin", authenticateAdminJwt, deleteAdmin);
-adminRouter.post("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetails);
+adminRouter.get("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetails);
 
 //lead routes
 
@@ -28,6 +34,15 @@ adminRouter.post("/update-lead", authenticateAdminJwt, updateLead);
 adminRouter.post("/delete-lead", authenticateAdminJwt, deleteLead);
 adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
+
+//quotation routes
+
+adminRouter.post("/create-quotation", authenticateAdminJwt, createQuotation);
+adminRouter.post("/update-quotation", authenticateAdminJwt, updateQuotation);
+adminRouter.post("/delete-quotation", authenticateAdminJwt, deleteQuotation);
+adminRouter.get("/get-all-quotations", authenticateAdminJwt, getAllQuotations);
+adminRouter.post("/get-quotation-by-id", authenticateAdminJwt, getQuotationById);
+adminRouter.post("/get-quotation-list", authenticateAdminJwt, getQuotationList);
 
 
 module.exports = adminRouter;
