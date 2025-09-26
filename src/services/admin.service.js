@@ -25,7 +25,7 @@ const adminService = {
     //  getAdminUserById: async (id) => {
     //     return await Admin.findOne({ where: { id: id } });
     // },
-    
+
     // ================= Admin delete=================
     getAdminById: async (id) => {
         return await Admin.findByPk(id);
@@ -38,7 +38,7 @@ const adminService = {
 
     //============== getall admin details===============
 
-    getAllAdmins: async () => {
+    getAdminDetails: async () => {
         return await Admin.findAll({
             attributes: ["id", "username", "email", "mobile"], // only needed fields
             order: [["id", "ASC"]],

@@ -19,7 +19,7 @@ const adminRouter = require("express").Router();
 adminRouter.post("/login", login);
 adminRouter.post("/create-admin", createAdmin);
 adminRouter.post("/delete-admin", authenticateAdminJwt, deleteAdmin);
-adminRouter.post("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetails);
+adminRouter.get("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetails);
 
 //lead routes
 

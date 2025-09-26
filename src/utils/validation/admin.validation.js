@@ -10,7 +10,7 @@ exports.createAdminValidationSchema = Joi.object({
 });
 
 
-exports.adminLoginValidationSchema = Joi.object({
+exports.loginValidationSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
 });
