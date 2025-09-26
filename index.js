@@ -77,7 +77,7 @@ process.on('SIGINT', async () => {
 
 // Connect DB & Create Tables
 // connectDB().then(() => {
-//     // createTables();
+    // createTables();
 // });
 (async () => {
     await connectDB();
