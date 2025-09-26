@@ -42,8 +42,8 @@ const login = async (request, response) => {
                 status: "SUCCESS",
                 message: "Login Successfully",
                 token,
-                userDetails: {
-                    userId: isUserExist.id,
+                details: {
+                    adminId: isUserExist.id,
                     username: isUserExist.username,
                     email: isUserExist.email,
                     mobile: isUserExist.mobile,
