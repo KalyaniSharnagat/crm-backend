@@ -4,8 +4,9 @@ const { createLeadValidationSchema } = require("../../utils/validation/admin.val
 const updateLead = async (request, response) => {
     try {
         // Extract data from request body
-        const { id, name, email, phone, company, status, assignedTo } = request.body;
+        const { id, name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, interestPercentage } = request.body;
 
+        // ================= Check ID =================
         if (!id) {
             return response.status(200).json({
                 status: "FAILED",
@@ -15,7 +16,7 @@ const updateLead = async (request, response) => {
 
         // ================= Validation =================
         const validationResult = createLeadValidationSchema.validate(
-            { name, email, phone, company, status, assignedTo },
+            { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, interestPercentage },
             { abortEarly: true }
         );
         if (validationResult.error) {
@@ -25,36 +26,36 @@ const updateLead = async (request, response) => {
             });
         }
 
-        // ================= Map status to DB ENUM =================
-        let dbStatus;
-        if (status) {
-            switch (status.toLowerCase()) {
-                case "new":
-                    dbStatus = "New";
-                    break;
-                case "contacted":
-                    dbStatus = "Contacted";
-                    break;
-                case "qualified":
-                case "positive":
-                    dbStatus = "Positive";
-                    break;
-                case "lost":
-                    dbStatus = "Lost";
-                    break;
-                default:
-                    dbStatus = "New";
-            }
+        // ================= Check if lead exists =================
+        const isLeadExist = await leadServices.getLeadById(id);
+        if (!isLeadExist) {
+            return response.status(200).json({
+                status: "FAILED",
+                message: "Lead not found with this ID",
+            });
         }
+
+        // ================= Map status to DB ENUM =================
+        const mapStatusToDB = (status) => {
+            if (!status) return undefined;
+            const map = { new: "New", contacted: "Contacted", positive: "Positive", qualified: "Positive", lost: "Lost" };
+            return map[status.toLowerCase()] || "New";
+        };
+
+        const dbStatus = mapStatusToDB(status);
 
         // ================= Prepare data to update =================
         const dataToUpdate = {
             name,
             email,
-            phone,
+            mobile,
             company,
             status: dbStatus,
             assignedTo: assignedTo || null,
+            leadSource,
+            notes,
+            projectName,
+            interestPercentage
         };
 
         // ================= Update lead =================
@@ -69,9 +70,10 @@ const updateLead = async (request, response) => {
         } else {
             return response.status(200).json({
                 status: "FAILED",
-                message: "Failed to update Lead, please check the ID",
+                message: "Failed to update Lead, please try again",
             });
         }
+
     } catch (error) {
         return response.status(500).json({
             status: "FAILED",

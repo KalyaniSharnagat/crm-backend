@@ -18,6 +18,8 @@ const updateQuotation = require("../controller/quotation/updateQuotation");
 
 
 const authenticateAdminJwt = require("../utils/middleware/authentication-admin-jwt");
+const updateWork = require("../controller/work/update-work");
+const getAssignList = require("../controller/lead/assign-list");
 
 
 
@@ -30,11 +32,12 @@ adminRouter.get("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetai
 
 //lead routes
 
-adminRouter.post("/create-lead", createLead);
+adminRouter.post("/create-lead", authenticateAdminJwt, createLead);
 adminRouter.post("/update-lead", authenticateAdminJwt, updateLead);
 adminRouter.post("/delete-lead", authenticateAdminJwt, deleteLead);
 adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
+adminRouter.get("/get-assign-list", authenticateAdminJwt, getAssignList);
 
 //quotation routes
 
@@ -48,5 +51,5 @@ adminRouter.post("/get-quotation-list", authenticateAdminJwt, getQuotationList);
 
 // work route
 adminRouter.post("/create-work", authenticateAdminJwt, createWork);
-
+adminRouter.post("/update-work", authenticateAdminJwt, updateWork);
 module.exports = adminRouter;

@@ -54,9 +54,9 @@ const Work = sequelize.define(
 
 // Associations 
 
-// Work.associate = (models) => {
-//     Work.belongsTo(models.Lead, { foreignKey: "leadId", as: "lead" });
-//     Work.belongsTo(models.Quotation, { foreignKey: "quotationId", as: "quotation" });
-// };
+Work.associate = (models) => {
+    Work.belongsTo(models.Lead, { foreignKey: "leadId", as: "lead" });
+    Work.belongsTo(models.Quotation, { foreignKey: "quotationId", as: "quotation" });
+};
 
 module.exports = Work;

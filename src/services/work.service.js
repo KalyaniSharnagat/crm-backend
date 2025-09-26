@@ -1,6 +1,6 @@
 const Work = require("../models/work.model");
 const Lead = require("../models/lead.model");
-// const Quotation = require("../models/quotation.model");
+const Quotation = require("../models/quotation.model");
 
 const workService = {
 
@@ -16,19 +16,19 @@ const workService = {
 
 
     // ================= Get Work by ID =================
-    // getWorkById: async (id) => {
-    //     try {
-    //         return await Work.findByPk(id, {
-    //             include: [
-    //                 { model: Lead, as: "lead" },
-    //                 { model: Quotation, as: "quotation" }
-    //             ]
-    //         });
-    //     } catch (error) {
-    //         console.error("Error in getWorkById:", error);
-    //         throw error;
-    //     }
-    // },
+    getWorkByWorkId: async (id) => {
+        try {
+            return await Work.findByPk(id, {
+                include: [
+                    { model: Lead, as: "lead" },
+                    { model: Quotation, as: "quotation" }
+                ]
+            });
+        } catch (error) {
+            console.error("Error in getWorkById:", error);
+            throw error;
+        }
+    },
 
     // ================= Get Work by Lead + Quotation (duplicate check) =================
     getWorkByLeadAndQuotation: async (leadName, quotationNo) => {
@@ -40,20 +40,21 @@ const workService = {
 
 
     // ================= Update Work =================
-    // updateWork: async (id, data) => {
-    //     try {
-    //         await Work.update(data, { where: { id } });
-    //         return await Work.findByPk(id, {
-    //             include: [
-    //                 { model: Lead, as: "lead" },
-    //                 { model: Quotation, as: "quotation" }
-    //             ]
-    //         });
-    //     } catch (error) {
-    //         console.error("Error in updateWork:", error);
-    //         throw error;
-    //     }
-    // },
+    updateWork: async (id, data) => {
+        try {
+            await Work.update(data, { where: { id } });
+            return await Work.findByPk(id, {
+                include: [
+                    { model: Lead, as: "lead" },
+                    { model: Quotation, as: "quotation" }
+                ]
+            });
+        } catch (error) {
+            console.error("Error in updateWork:", error);
+            throw error;
+        }
+    },
+
 
     // ================= Delete Work =================
     // deleteWork: async (id) => {
