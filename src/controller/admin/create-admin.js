@@ -1,60 +1,51 @@
-const express = require("express");
 const bcrypt = require("bcrypt");
 const adminService = require("../../services/admin.service");
 const { createAdminValidationSchema } = require("../../utils/validation/admin.validation");
 
-const createAdmin = async (req, res) => {
+const createAdmin = async (request, response) => {
     try {
-        const { username, email, mobile, password } = req.body;
+        // Extract data from request body
+        const { username, email, mobile, password } = request.body;
 
-        // ============ Debug: Log incoming request ============
-        // console.log("Request Body:", req.body);
-
-        // ================= Validation =================
-        const { error } = createAdminValidationSchema.validate(
-            {
-                username: username?.trim(),
-                email: email?.trim(),
-                mobile: mobile ? mobile.toString().trim() : "",
-                password,
-            },
-            { abortEarly: false } // Return all errors
+        // Check validation
+        const validationResult = await createAdminValidationSchema.validate(
+            { username, email, mobile: mobile?.toString(), password },
+            { abortEarly: true }
         );
 
-        if (error) {
-            console.log("Validation Errors:", error.details);
-            const messages = error.details.map(d => d.message);
-            return res.status(400).json({
+        if (validationResult.error) {
+            response.status(200).json({
                 status: "FAILED",
-                message: "Validation error",
-                errors: messages,
+                message: validationResult?.error?.details[0]?.message,
             });
+            return;
         }
 
-        // ================ Check if user exists =================
+        // Check if user already exists with email
         const isUserExist = await adminService.getAdminByEmail(email);
         if (isUserExist) {
-            return res.status(409).json({
+            response.status(200).json({
                 status: "FAILED",
-                message: "User already exists with this Email, please try another Email",
+                message: "User already exist with this Email, Please try with another Email",
             });
+            return;
         }
 
-        // ================= Hash password =================
-        const hashedPassword = await bcrypt.hash(password, 12);
+        // Hash password
+        const hashPassword = await bcrypt.hash(password, 12);
 
         const dataToInsert = {
-            username: username.toLowerCase(),
+            username: username?.toLowerCase(),
             email,
             mobile: mobile?.toString(),
-            password: hashedPassword,
+            password: hashPassword,
             isActive: true,
         };
 
-        // ================= Create Admin =================
+        // Insert data into db & send response to client
         const result = await adminService.createAdmin(dataToInsert);
         if (result) {
-            return res.status(200).json({
+            response.status(200).json({
                 status: "SUCCESS",
                 message: "Admin created successfully",
                 data: {
@@ -64,20 +55,18 @@ const createAdmin = async (req, res) => {
                     mobile: result.mobile,
                 },
             });
+            return;
+        } else {
+            response.status(200).json({
+                status: "FAILED",
+                message: "Failed to create user, Please try again!",
+            });
+            return;
         }
-
-        // Fallback if creation fails
-        return res.status(500).json({
-            status: "FAILED",
-            message: "Failed to create Admin, please try again!",
-        });
-
     } catch (error) {
-        console.error("Server Error:", error); // detailed log
-        return res.status(500).json({
+        return response.status(500).json({
             status: "FAILED",
-            message: "Internal Server Error",
-            error: error.message,
+            message: error.message,
         });
     }
 };

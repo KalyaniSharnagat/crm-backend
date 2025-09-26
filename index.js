@@ -76,9 +76,14 @@ process.on('SIGINT', async () => {
 });
 
 // Connect DB & Create Tables
-connectDB().then(() => {
-    // createTables();
-});
+// connectDB().then(() => {
+//     // createTables();
+// });
+(async () => {
+    await connectDB();
+    // await createTables(); // ✅ ensures tables exist
+})();
+
 // listen on PORT
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT} 🏃‍♂️`);
