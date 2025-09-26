@@ -8,6 +8,7 @@ const deleteLead = require("../controller/lead/delete-lead");
 const getLeadById = require("../controller/lead/get-lead-by-id");
 const getLeadList = require("../controller/lead/get-lead-list");
 const updateLead = require("../controller/lead/update-lead");
+const createWork = require("../controller/work/create-work");
 
 
 const authenticateAdminJwt = require("../utils/middleware/authentication-admin-jwt");
@@ -29,5 +30,8 @@ adminRouter.post("/delete-lead", authenticateAdminJwt, deleteLead);
 adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
 
+
+// work route
+adminRouter.post("/create-work", authenticateAdminJwt, createWork);
 
 module.exports = adminRouter;
