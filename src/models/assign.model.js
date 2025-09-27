@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/db");
+const Lead = require("../models/lead.model");
 
 const Assign = sequelize.define('Assign', {
     id: {
@@ -54,6 +55,8 @@ const Assign = sequelize.define('Assign', {
         raw: true   // this makes all queries return plain JSON
     }
 });
+
+// association 
 Assign.associate = (models) => {
     Assign.belongsTo(models.Lead, { foreignKey: "leadId", as: "lead", onDelete: "CASCADE", onUpdate: "CASCADE" });
 }

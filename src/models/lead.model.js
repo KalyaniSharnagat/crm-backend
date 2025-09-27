@@ -26,10 +26,13 @@ const Lead = sequelize.define('Lead', {
         type: DataTypes.ENUM('Website', 'Referral', 'Cold Call', 'Other'), defaultValue: 'Other'
     },
     status: {
-        type: DataTypes.ENUM('New', 'Contacted', 'Positive', 'Lost'),
-        defaultValue: 'New'
+        type: DataTypes.INTEGER,
+        require: true,
     },
-
+    leadId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     assignedTo: {
         type: DataTypes.STRING,
         allowNull: true
@@ -59,5 +62,5 @@ const Lead = sequelize.define('Lead', {
     }
 });
 
-// a
+
 module.exports = Lead;
