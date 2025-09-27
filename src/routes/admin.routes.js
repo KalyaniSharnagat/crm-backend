@@ -19,7 +19,14 @@ const updateQuotation = require("../controller/quotation/updateQuotation");
 
 const authenticateAdminJwt = require("../utils/middleware/authentication-admin-jwt");
 const updateWork = require("../controller/work/update-work");
-const getAssignList = require("../controller/lead/assign-list");
+
+const addFollowUp = require("../controller/followup/add-follow-up");
+const updateFollowUp = require("../controller/followup/update-follow-up");
+const approveFollowUp = require("../controller/followup/approve-follow-up");
+const rejectFollowUp = require("../controller/followup/reject-follow-up");
+const getAssignList = require("../controller/assign/assign-list");
+const createAssign = require("../controller/assign/create-assign");
+const createGenerationLog = require("../controller/generation-log/create-log-generation");
 
 
 
@@ -37,7 +44,10 @@ adminRouter.post("/update-lead", authenticateAdminJwt, updateLead);
 adminRouter.post("/delete-lead", authenticateAdminJwt, deleteLead);
 adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
-adminRouter.get("/get-assign-list", authenticateAdminJwt, getAssignList);
+
+// assign routes
+adminRouter.post("/assign-list", authenticateAdminJwt, getAssignList);
+adminRouter.post("/create-assign", authenticateAdminJwt, createAssign);
 
 //quotation routes
 
@@ -52,4 +62,18 @@ adminRouter.post("/get-quotation-list", authenticateAdminJwt, getQuotationList);
 // work route
 adminRouter.post("/create-work", authenticateAdminJwt, createWork);
 adminRouter.post("/update-work", authenticateAdminJwt, updateWork);
+
+
+
+// follow-up route
+adminRouter.post("/add-follow-up", authenticateAdminJwt, addFollowUp);
+adminRouter.post("/update-follow-up", authenticateAdminJwt, updateFollowUp);
+adminRouter.post("/approve-follow-up", authenticateAdminJwt, approveFollowUp);
+adminRouter.post("/reject-follow-up", authenticateAdminJwt, rejectFollowUp);
+
+
+// log-generation route
+adminRouter.post("/create-log-generation", authenticateAdminJwt, createGenerationLog);
+
+
 module.exports = adminRouter;

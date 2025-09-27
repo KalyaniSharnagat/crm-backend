@@ -107,3 +107,31 @@ exports.updateQuotationValidationSchema = Joi.object({
     ).min(1).optional(),
     status: Joi.string().valid('Draft', 'Sent', 'Accepted', 'Declined').optional(),
 });
+
+
+//?======================== ceate follow up =============================
+exports.createFollowUpValidationSchema = Joi.object({
+    leadId: Joi.number().required().messages({ "any.required": "Lead ID is required", }),
+    followUpDate: Joi.date().required().messages({ "any.required": "Follow-up date is required", }),
+    mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").required().messages({ "any.only": "Invalid follow-up mode", "any.required": "Follow-up mode is required", }),
+    assignedTo: Joi.number().allow(null),
+    createdBy: Joi.number().required().messages({ "any.required": "Created By is required", }),
+});
+
+//?================update follow up =====================
+exports.updateFollowUpValidationSchema = Joi.object({
+    id: Joi.number().integer().required().messages({ "number.base": "Follow-up ID must be a number", "any.required": "Follow-up ID is required" }),
+    followUpDate: Joi.date().optional().messages({ "date.base": "Follow-up date must be a valid date" }),
+    nextFollowUpDate: Joi.date().optional().messages({ "date.base": "Next follow-up date must be a valid date" }),
+    mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").optional().messages({ "string.base": "Mode must be a text", "any.only": "Mode must be one of Call, Email, Meeting, Message, WhatsApp, Other" }),
+    notes: Joi.string().allow("", null).optional().messages({ "string.base": "Notes must be text" }),
+    status: Joi.string().valid("Scheduled", "Done", "Pending", "Cancelled", "Approved", "Rejected").optional().messages({ "any.only": "Status must be one of Scheduled, Done, Pending, Cancelled, Approved, Rejected" }),
+    responseText: Joi.string().allow("", null).optional().messages({ "string.base": "Response must be text" }),
+    assignedTo: Joi.number().integer().optional().messages({ "number.base": "AssignedTo must be a user id (number)" })
+});
+
+//?========================approve followup===================
+exports.approveFollowUpValidationSchema = Joi.object({
+    id: Joi.number().integer().required().messages({ "number.base": "Follow-up ID must be a number", "any.required": "Follow-up ID is required" }),
+    approvedBy: Joi.number().integer().required().messages({ "number.base": "ApprovedBy must be a number", "any.required": "ApprovedBy is required" })
+});
