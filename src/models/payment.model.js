@@ -16,12 +16,13 @@ const Payment = sequelize.define('Payment', {
 
     clientName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        // allowNull: false,
     },
 
     paymentId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING, // पहले INTEGER था
         allowNull: false,
+        unique: true
     },
 
     installmentNo: {
@@ -73,16 +74,16 @@ const Payment = sequelize.define('Payment', {
     }
 
 }, {
-    tableName: "assign",
+    tableName: "payment",
     freezeTableName: true,
     timestamps: true,
-    defaultScope: {
-        raw: true   // this makes all queries return plain JSON
-    }
+    // defaultScope: {
+    //     raw: true   // this makes all queries return plain JSON
+    // }
 });
 
 // association 
-Assign.associate = (models) => {
-    Assign.belongsTo(models.Lead, { foreignKey: "leadId", as: "lead", onDelete: "CASCADE", onUpdate: "CASCADE" });
+Payment.associate = (models) => {
+    Payment.belongsTo(models.Lead, { foreignKey: "leadId", as: "lead", onDelete: "CASCADE", onUpdate: "CASCADE" });
 }
 module.exports = Payment;

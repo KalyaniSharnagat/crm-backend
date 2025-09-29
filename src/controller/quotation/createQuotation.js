@@ -42,6 +42,20 @@ const createQuotation = async (request, response) => {
             isActive: true,
         }
 
+        // Save the product images
+        const QuotationImages = request.files?.map((file) => {
+            const splitUrlArray = file?.destination?.replace(/\\/g, "/").split("/");
+            const filteredUrl = splitUrlArray[splitUrlArray.length - 3] + '/' + splitUrlArray[splitUrlArray.length - 2] + '/' + splitUrlArray[splitUrlArray.length - 1] + file.filename;
+            return {
+                name: file.originalname,
+                fileUrl: filteredUrl,
+                productId: result.id,
+                type: file.mimetype.startsWith("image/") ? "image" : "video", // Set type based on file type
+            }
+        }) ?? [];
+        if (QuotationImages.length > 0) {
+            await quotationService.saveQuotationImages(QuotationImages);
+        }
         // Insert data into db & send response to client
         const result = await quotationService.createQuotation(dataToInsert);
         if (result) {

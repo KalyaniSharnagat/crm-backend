@@ -6,7 +6,11 @@ exports.createAdminValidationSchema = Joi.object({
     username: Joi.string().min(3).max(30).pattern(/^[A-Za-z]+$/).required().messages({ "string.base": "Username must be a text", "string.empty": "Username cannot be empty", "string.min": "Username should have at least 3 characters", "string.max": "Username should not exceed 30 characters", "any.required": "Username is required", "string.pattern.base": "Username must contain only letters (A-Z, a-z)", }),
     email: Joi.string().email({ tlds: { allow: false } }).required().messages({ "string.base": "Email must be a text", "string.empty": "Email cannot be empty", "string.email": "Please provide a valid email address", "any.required": "Email is required", }),
     mobile: Joi.string().pattern(/^[0-9]{10}$/).required().messages({ "string.base": "Mobile number must be a text", "string.empty": "Mobile number cannot be empty", "string.pattern.base": "Mobile number must be 10 digits", "any.required": "Mobile number is required" }),
-    password: Joi.string().min(6).max(20).required().messages({ "string.base": "Password must be a text", "string.empty": "Password cannot be empty", "string.min": "Password must be at least 6 characters", "string.max": "Password must not exceed 20 characters", "any.required": "Password is required" }),
+    password: Joi.string().min(6).max(20).required().messages({
+        "string.base": "Password must be a text",
+        "string.empty": "Password cannot be empty", "string.min": "Password must be at least 6 characters",
+        "string.max": "Password must not exceed 20 characters", "any.required": "Password is required"
+    }),
 });
 
 
@@ -23,7 +27,7 @@ exports.adminIdValidationSchema = Joi.object({
 //?======================== lead ================================
 
 exports.createLeadValidationSchema = Joi.object({
-    name: Joi.string().min(3).max(50).required().messages({ "string.base": "Name must be a text", "string.empty": "Name cannot be empty", "string.min": "Name should have at least 3 characters", "string.max": "Name should not exceed 50 characters", "any.required": "Name is required" }),
+    name: Joi.string().min(3).max(50).required().messages({ "string.base": "Name must be a text", "string.empty": "Name cannot be empty", "string.min": "Name should have at least 3 characters", "string.max": "Name should not exceed 50 characters", "   .required": "Name is required" }),
     email: Joi.string().email().optional().allow(null, ""),
     mobile: Joi.string().optional().allow(null, ""),
     company: Joi.string().optional().allow(null, ""),
@@ -43,6 +47,11 @@ exports.leadIdValidationSchema = Joi.object({
     id: Joi.number().integer().required().messages({ "number.base": "Lead ID must be a number", "number.integer": "Lead ID must be an integer", "any.required": "Lead ID is required", }),
 });
 
+//?==================== assign =======================
+const createAssignValidationSchema = Joi.object({
+    leadId: Joi.number().integer().required().messages({ "any.required": "leadId is required", "number.base": "leadId must be a number", "number.integer": "leadId must be an integer" }),
+    assignTo: Joi.number().integer().required().messages({ "any.required": "assignTo is required", "number.base": "assignTo must be a number", "number.integer": "assignTo must be an integer" })
+});
 //?======================  work ======================
 
 
@@ -134,4 +143,34 @@ exports.updateFollowUpValidationSchema = Joi.object({
 exports.approveFollowUpValidationSchema = Joi.object({
     id: Joi.number().integer().required().messages({ "number.base": "Follow-up ID must be a number", "any.required": "Follow-up ID is required" }),
     approvedBy: Joi.number().integer().required().messages({ "number.base": "ApprovedBy must be a number", "any.required": "ApprovedBy is required" })
+});
+
+//?=================== payment ============================
+exports.createPaymentValidationSchema = Joi.object({
+    projectName: Joi.string().required(),
+    clientName: Joi.string().required(),
+    paymentId: Joi.string().required(),
+    installmentNo: Joi.number().integer().min(1).required(),
+    dueDate: Joi.date().required(),
+    amount: Joi.number().positive().required(),
+    paymentMethod: Joi.string().valid("Cash", "Card", "UPI", "Bank Transfer", "Cheque").required(),
+    installmentCount: Joi.number().integer().min(1).required(),
+    totalAmount: Joi.number().positive().required(),
+    notes: Joi.string().allow(null, "")
+});
+
+exports.updatePaymentValidationSchema = Joi.object({
+    id: Joi.number().integer().required(),
+    projectName: Joi.string().optional(),
+    clientName: Joi.string().optional(),
+    installmentNo: Joi.number().integer().optional(),
+    dueDate: Joi.date().optional(),
+    amount: Joi.number().positive().optional(),
+    paymentMethod: Joi.string().valid("Cash", "Card", "UPI", "Bank Transfer", "Cheque").optional(),
+    installmentCount: Joi.number().integer().optional(),
+    totalAmount: Joi.number().positive().optional(),
+    notes: Joi.string().allow(null, "").optional(),
+    status: Joi.string().valid("Pending", "Partially Paid", "Completed").optional(),
+    paidDate: Joi.date().optional(),
+    paymentId: Joi.string().optional()
 });

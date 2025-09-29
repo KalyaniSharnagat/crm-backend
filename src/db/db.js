@@ -23,7 +23,7 @@ const connectDB = async () => {
 // Create/Update Tables
 async function createTables() {
     try {
-        await sequelize.sync({ alter: true }); // safe migration
+        await sequelize.sync({ force: true }); // safe migration
         console.log("✅ All tables created/updated successfully.");
     } catch (error) {
         console.error("❌ Error creating tables:", error.message);
