@@ -27,6 +27,13 @@ const rejectFollowUp = require("../controller/followup/reject-follow-up");
 const getAssignList = require("../controller/assign/assign-list");
 const createAssign = require("../controller/assign/create-assign");
 const createGenerationLog = require("../controller/generation-log/create-log-generation");
+const addPayment = require("../controller/payment/add-payment");
+const updatePayment = require("../controller/payment/update-payment");
+const getPaymentById = require("../controller/payment/get-payment-by-id");
+const getPayments = require("../controller/payment/get-payment");
+const deletePayment = require("../controller/payment/delete-payment");
+const markPaymentPaid = require("../controller/payment/mark-payment-paid");
+const getPaymentList = require("../controller/payment/get-payment-list");
 
 
 
@@ -75,5 +82,14 @@ adminRouter.post("/reject-follow-up", authenticateAdminJwt, rejectFollowUp);
 // log-generation route
 adminRouter.post("/create-log-generation", authenticateAdminJwt, createGenerationLog);
 
+// payment routes
+adminRouter.post("/add-payment", authenticateAdminJwt, addPayment);
+adminRouter.post("/update-payment", authenticateAdminJwt, updatePayment);
+adminRouter.post("/delete-payment", authenticateAdminJwt, deletePayment);
+adminRouter.post("/get-payment-list", authenticateAdminJwt, getPaymentList);
+// adminRouter.post("/get-payment", authenticateAdminJwt, );
+adminRouter.get("/get-payment", authenticateAdminJwt, getPayments);
+adminRouter.post("/get-payment-by-id", authenticateAdminJwt, getPaymentById);
+adminRouter.post("/mark-payment-paid", authenticateAdminJwt, markPaymentPaid);
 
 module.exports = adminRouter;

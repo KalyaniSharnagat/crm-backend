@@ -36,6 +36,14 @@ const quotationService = {
         }
     },
 
+    saveQuotationImages: async function (dataToInsert) {
+        try {
+            return await QuotationImages.bulkCreate(dataToInsert)
+        } catch (error) {
+            throw error;
+        }
+    },
+
     deleteQuotation: async (quotationId) => {
         const deletedCount = await Quotation.destroy({ where: { id: quotationId } });
         return deletedCount > 0 ? { quotationId } : null;
@@ -56,7 +64,7 @@ const quotationService = {
                 { quotationNo: { [Op.iLike]: `%${searchString}%` } },
                 { clientName: { [Op.iLike]: `%${searchString}%` } },
                 { clientCompany: { [Op.iLike]: `%${searchString}%` } },
-            ],  
+            ],
         } : {};
 
         const { count, rows } = await Quotation.findAndCountAll({
@@ -68,8 +76,8 @@ const quotationService = {
         });
         const totalPages = Math.ceil(count / limit);
         return { quotations: rows, currentPage: page, totalPages, totalItems: count };
-    }   
-    
+    }
+
 
 };
 

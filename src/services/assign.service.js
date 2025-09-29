@@ -1,88 +1,41 @@
-
 const Assign = require("../models/assign.model");
 const Lead = require("../models/lead.model");
 
 const assignService = {
 
-    fetchAssignList: async ({ assignedTo, leadId, page = 1, limit = 10 }) => {
-        const where = {};
-
-        // Optional filters
-        if (assignedTo) where.assignedTo = assignedTo;
-        if (leadId) where.leadId = leadId;
-
-        const offset = (page - 1) * limit;
-
-        // Fetch with count for pagination
-        const { count, rows } = await Assign.findAndCountAll({
-            where,
-            limit,
-            offset,
-            order: [["createdAt", "DESC"]]
-        });
-
-        return {
-            data: rows,
-            pagination: {
-                total: count,
-                page,
-                limit,
-                totalPages: Math.ceil(count / limit)
-            }
-        };
+    createAssign: async (dataToInsert) => {
+        // Create assign
+        const assign = await Lead.create(dataToInsert);
+        return assign;
     },
 
-   createAssignService : async (data) => {
-    const { leadId, assignedTo, name, email, mobile, company, leadSource } = data;
-
-    if (!assignedTo) throw new Error("assignedTo is required");
-
-    let actualLeadId;
-
-    if (leadId) {
-        // Check if Lead exists
-        let lead = await Lead.findByPk(leadId);
-        if (!lead) {
-            // Lead does not exist → create new Lead
-            lead = await Lead.create({
-                name: name || `Lead_${Date.now()}`,
-                email: email || null,
-                mobile: mobile || null,
-                company: company || null
-            });
-        }
-        actualLeadId = lead.id;
-    } else {
-
-        const lead = await Lead.create({
-            name: name || `Lead_${Date.now()}`,
-            email: email || null,
-            mobile: mobile || null,
-            company: company || null
+    getAssignList: async (filters = {}, options = {}) => {
+        const assigns = await Assign.findAll({
+            where: filters,
+            include: [{ model: Lead, as: "lead" }],
+            limit: options.limit || 20,
+            offset: options.offset || 0,
+            order: [["createdAt", "DESC"]],
         });
-        actualLeadId = lead.id;
+        return assigns;
+    },
+
+    getAssignById: async (id) => {
+        return await Assign.findByPk(id, {
+            include: [{ model: Lead, as: "lead" }]
+        });
+    },
+
+    updateAssign: async (id, dataToUpdate) => {
+        const [updatedCount] = await Assign.update(dataToUpdate, { where: { id } });
+        if (updatedCount === 0) return null;
+        return await Assign.findByPk(id);
+    },
+
+    deleteAssign: async (id) => {
+        const deletedCount = await Assign.destroy({ where: { id } });
+        return deletedCount > 0;
     }
-
-    // Create Assign linked to Lead
-    const assign = await Assign.create({
-        name: name || null,
-        email: email || null,
-        mobile: mobile || null,
-        company: company || null,
-        leadSource: leadSource || "Other",
-        leadId: actualLeadId,
-        assignedTo
-    });
-
-    // Fetch Assign with Lead details
-    const result = await Assign.findOne({
-        where: { id: assign.id },
-        include: [{ model: Lead, as: "lead" }]
-    });
-
-    return result;
-
-},
-
 }
-module.exports = assignService
+
+module.exports = assignService;

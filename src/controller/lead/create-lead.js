@@ -4,11 +4,11 @@ const { createLeadValidationSchema } = require("../../utils/validation/admin.val
 const createLead = async (request, response) => {
     try {
         // Extract data from request body
-        const { name, email, mobile, company, status, assignedTo,leadSource,notes,projectName,interestPercentage } = request.body;
+        const { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, interestPercentage } = request.body;
 
         // ================= Validation =================
         const validationResult = createLeadValidationSchema.validate(
-            { name, email, mobile, company, status, assignedTo,leadSource,notes,projectName,interestPercentage},
+            { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, interestPercentage },
             { abortEarly: true }
         );
         if (validationResult.error) {
