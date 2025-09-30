@@ -40,13 +40,23 @@ const updateAssign = require("../controller/assign/update-lead-assign");
 const deleteAssign = require("../controller/assign/delete-lead-assign");
 const downloadPaymentReceipt = require("../controller/payment/download-payment-receipt");
 const getAdminList = require("../controller/admin/get-list-admin");
+const createNotification = require("../controller/notification/add-lead-notification");
+const LeadAddedNotification = require("../controller/notification/add-lead-notification");
+const createUser = require("../controller/user/add-user");
+const getUserList = require("../controller/user/get-user-list");
+const updateUser = require("../controller/user/update-user");
+const deleteUser = require("../controller/user/delete-user");
+const toggleUserStatus = require("../controller/user/toggle-status");
+const getUserById = require("../controller/user/get-user-by-id");
 
 
 
 
 
 const adminRouter = require("express").Router();
-//admin rout
+
+
+//admin route
 
 adminRouter.post("/login", login);
 adminRouter.post("/create-admin", createAdmin);
@@ -54,6 +64,13 @@ adminRouter.post("/get-list-admin", authenticateAdminJwt, getAdminList);
 adminRouter.post("/delete-admin", authenticateAdminJwt, deleteAdmin);
 adminRouter.get("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetails);
 
+//user route
+adminRouter.post("/add-user", authenticateAdminJwt, createUser);
+adminRouter.post("/get-user-list", authenticateAdminJwt, getUserList);
+adminRouter.post("/update-user", authenticateAdminJwt, updateUser);
+adminRouter.post("/delete-user", authenticateAdminJwt, deleteUser);
+adminRouter.post("/get-user-by-id", authenticateAdminJwt, getUserById);
+adminRouter.post("/toggle-status", authenticateAdminJwt, toggleUserStatus);
 //lead routes
 
 adminRouter.post("/create-lead", authenticateAdminJwt, createLead);
@@ -103,5 +120,10 @@ adminRouter.post("/download-payment-receipt", authenticateAdminJwt, downloadPaym
 adminRouter.get("/get-payment", authenticateAdminJwt, getPayments);
 adminRouter.post("/get-payment-by-id", authenticateAdminJwt, getPaymentById);
 adminRouter.post("/mark-payment-paid", authenticateAdminJwt, markPaymentPaid);
+
+
+// notification route
+adminRouter.post("/add-lead-notification", authenticateAdminJwt, LeadAddedNotification);
+
 
 module.exports = adminRouter;

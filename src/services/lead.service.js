@@ -43,25 +43,35 @@ const leadService = {
         }
     },
 
-    getLeadslist: async (filters = {}, options = {}) => {
-        try {
-            const leads = await Lead.findAll({
-                where: {
-                    ...filters,
-                    name: { [Op.ne]: null }, // Sequelize 'not equal null'
-                },
-                limit: options.limit || 20,
-                offset: options.offset || 0,
-                order: [["createdAt", "DESC"]],
-            });
-            return leads;
-        } catch (error) {
-            throw error;
+    getLeadList: async (page = 1, limit = 10, searchString = "") => {
+        const offset = (page - 1) * limit;
+
+        const where = {};
+        if (searchString) {
+            where[Op.or] = [
+                { name: { [Op.iLike]: `%${searchString}%` } },
+                { email: { [Op.iLike]: `%${searchString}%` } },
+                { mobile: { [Op.iLike]: `%${searchString}%` } },
+                { company: { [Op.iLike]: `%${searchString}%` } },
+                { projectName: { [Op.iLike]: `%${searchString}%` } },
+            ];
         }
+
+        return await Lead.findAndCountAll({
+            where,
+            limit,
+            offset,
+            order: [["createdAt", "DESC"]],
+        });
     },
-    getLeadById: async (id) => {
-        return await Lead.findByPk(id);
+
+
+    getLeadById: async (leadId) => {
+        return await Lead.findOne({
+            where: { id: leadId }
+        });
     }
-}
+
+};
 
 module.exports = leadService

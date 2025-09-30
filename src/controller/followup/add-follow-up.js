@@ -1,4 +1,5 @@
 const followUpService = require("../../services/followup.service");
+const leadService = require("../../services/lead.service");
 const { createFollowUpValidationSchema } = require("../../utils/validation/admin.validation");
 
 const addFollowUp = async (request, response) => {
@@ -22,6 +23,14 @@ const addFollowUp = async (request, response) => {
             return response.status(200).json({
                 status: "FAILED",
                 message: "Follow-up already exists for this Lead on the same date",
+            });
+        }
+
+        const isLeadExist = await leadService.getLeadById(leadId);
+        if (!isLeadExist) {
+            return response.status(200).json({
+                status: "FAILED",
+                message: "Lead not found with this ID",
             });
         }
 

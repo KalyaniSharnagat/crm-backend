@@ -23,6 +23,25 @@ exports.adminIdValidationSchema = Joi.object({
     adminId: Joi.number().integer().positive().required().messages({ "number.base": "Admin ID must be a number", "number.integer": "Admin ID must be an integer", "number.positive": "Admin ID must be a positive number", "any.required": "Admin ID is required", }),
 });
 
+//?====================== user =============================
+exports.createUserValidationSchema = Joi.object({
+    username: Joi.string().min(2).max(100).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    mobile: Joi.string().pattern(/^[0-9]{10}$/).optional().allow(null, ""),
+    role: Joi.string().valid("Manager", "Sales Team", "Team Leader", "Director", "Tech Head", "CEO", "Sales Head", "HR", "Admin").optional(),
+    status: Joi.string().valid("enable", "disable").optional(),
+});
+
+exports.updateUserValidationSchema = Joi.object({
+    id: Joi.number().integer().required(),
+    username: Joi.string().min(2).max(100).optional(),
+    email: Joi.string().email().optional(),
+    mobile: Joi.string().pattern(/^[0-9]{10}$/).optional().allow(null, ""),
+    role: Joi.string().valid("User", "Manager", "Director").optional(),
+    status: Joi.string().valid("enable", "disable").optional(),
+    password: Joi.string().min(6).optional(),
+});
 
 //?======================== lead ================================
 
@@ -149,6 +168,7 @@ exports.createFollowUpValidationSchema = Joi.object({
 //?================update follow up =====================
 exports.updateFollowUpValidationSchema = Joi.object({
     id: Joi.number().integer().required().messages({ "number.base": "Follow-up ID must be a number", "any.required": "Follow-up ID is required" }),
+    leadId: Joi.number().integer().required(),
     followUpDate: Joi.date().optional().messages({ "date.base": "Follow-up date must be a valid date" }),
     nextFollowUpDate: Joi.date().optional().messages({ "date.base": "Next follow-up date must be a valid date" }),
     mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").optional().messages({ "string.base": "Mode must be a text", "any.only": "Mode must be one of Call, Email, Meeting, Message, WhatsApp, Other" }),
@@ -200,3 +220,21 @@ exports.updatePaymentValidationSchema = Joi.object({
 exports.downloadPaymentReceiptValidationSchema = Joi.object({
     paymentId: Joi.string().required().messages({ "string.empty": "Payment ID is required", "any.required": "Payment ID is required", }),
 });
+
+//?============================= notification =================================
+exports.createNotificationValidationSchema = Joi.object({
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    type: Joi.string().valid("INFO", "WARNING", "SUCCESS", "ERROR").required(),
+    recipientId: Joi.number().integer().required(),
+    createdBy: Joi.number().integer().required(),
+    date: Joi.date().iso().required()
+});
+exports.getNotificationsValidationSchema = Joi.object({
+    userId: Joi.number().integer().required()
+});
+
+exports.markAsReadValidationSchema = Joi.object({
+    id: Joi.number().integer().required()
+});
+
