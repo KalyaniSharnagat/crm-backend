@@ -39,14 +39,18 @@ const getAssignList = require("../controller/assign/lead-assign-list");
 const updateAssign = require("../controller/assign/update-lead-assign");
 const deleteAssign = require("../controller/assign/delete-lead-assign");
 const downloadPaymentReceipt = require("../controller/payment/download-payment-receipt");
+const getAdminList = require("../controller/admin/get-list-admin");
+
 
 
 
 
 const adminRouter = require("express").Router();
+//admin rout
 
 adminRouter.post("/login", login);
 adminRouter.post("/create-admin", createAdmin);
+adminRouter.post("/get-list-admin", authenticateAdminJwt, getAdminList);
 adminRouter.post("/delete-admin", authenticateAdminJwt, deleteAdmin);
 adminRouter.get("/get-all-admin-details", authenticateAdminJwt, getAllAdminDetails);
 
