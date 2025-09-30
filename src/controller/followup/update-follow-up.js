@@ -4,11 +4,11 @@ const { updateFollowUpValidationSchema } = require("../../utils/validation/admin
 
 const updateFollowUp = async (request, response) => {
     try {
-        const { id, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, responseText, assignedTo } = request.body;
+        const { id, leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, responseText, assignedTo } = request.body;
 
         // Validation
         const validationResult = await updateFollowUpValidationSchema.validate(
-            { id, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, responseText, assignedTo },
+            { id, leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, responseText, assignedTo },
             { abortEarly: true }
         );
 
@@ -29,7 +29,10 @@ const updateFollowUp = async (request, response) => {
         }
 
         // ================= Check if lead exists =================
-        const isLeadExist = await leadServices.getLeadById(id);
+
+
+        const isLeadExist = await leadServices.getLeadById(leadId);
+        console.log("--------", isLeadExist);
         if (!isLeadExist) {
             return response.status(200).json({
                 status: "FAILED",
