@@ -9,7 +9,7 @@ const Lead = sequelize.define("Lead", {
         primaryKey: true, autoIncrement: true
     },
 
-    ClientName: {
+    name: {
         type: DataTypes.STRING,
         allowNull: true
     },

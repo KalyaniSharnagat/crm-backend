@@ -1,7 +1,7 @@
 const Lead = require('../models/lead.model');
 const { Op } = require('sequelize');
 
-const leadListService = {
+const leadService = {
 
     createLead: async (data) => {
         return await Lead.create(data);
@@ -64,4 +64,4 @@ const leadListService = {
     }
 }
 
-module.exports = leadListService
+module.exports = leadService
