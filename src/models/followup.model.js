@@ -9,6 +9,20 @@ const FollowUp = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
+        projectName: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+
+        clientName: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+
+        followUpByName: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
 
         leadId: {
             type: DataTypes.INTEGER,
@@ -89,7 +103,7 @@ const FollowUp = sequelize.define(
                 "Positive",
                 "Negative",
                 "Pending",
-                "Interested but negotiating" // 👈 नया value
+                "Interested but negotiating"
             ),
             allowNull: true,
         },

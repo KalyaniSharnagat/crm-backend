@@ -3,7 +3,7 @@ const { createFollowUpValidationSchema } = require("../../utils/validation/admin
 
 const addFollowUp = async (request, response) => {
     try {
-        const { leadId, quotationId, followUpDate, nextFollowUpDate, mode, notes, assignedTo, priority, response: customerResponse, outcome, callNumber, whatsappNumber, emailId, attachment, attachmentMultiple, location, createdBy } = request.body;
+        const { leadId, projectName, clientName, followUpDate, nextFollowUpDate, mode, notes, followUpByName, assignedTo, priority, response: customerResponse, outcome, callNumber, whatsappNumber, emailId, attachment, attachmentMultiple, location, createdBy } = request.body;
 
         //  Validation
         const validationResult = await createFollowUpValidationSchema.validate(
@@ -25,7 +25,7 @@ const addFollowUp = async (request, response) => {
             });
         }
 
-        const dataToInsert = { leadId, quotationId, followUpDate, nextFollowUpDate, mode, notes, assignedTo, priority, response: customerResponse, outcome, callNumber, whatsappNumber, emailId, attachment, attachmentMultiple, location, createdBy, status: "Scheduled", notifyAdmin: false, notifyAssignedUser: false, reminderSent: false, isActive: true };
+        const dataToInsert = { leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, assignedTo, priority, response: customerResponse, outcome, callNumber, whatsappNumber, emailId, attachment, attachmentMultiple, location, createdBy, status: "Scheduled", notifyAdmin: false, notifyAssignedUser: false, reminderSent: false, isActive: true };
 
         // Insert FollowUp
         const result = await followUpService.createFollowUp(dataToInsert);
@@ -33,10 +33,13 @@ const addFollowUp = async (request, response) => {
         if (result) {
             return response.status(200).json({
                 status: "SUCCESS",
-                message: "Follow-up created successfully",
+                message: "Follow-up Added successfully",
                 data: {
                     id: result.id,
                     leadId: result.leadId,
+                    projectName: result.projectName,
+                    clientName: result.clientName,
+                    followUpByName: result.followUpByName,
                     followUpDate: result.followUpDate,
                     mode: result.mode,
                     status: result.status,

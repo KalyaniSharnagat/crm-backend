@@ -14,7 +14,7 @@ const markPaymentPaid = async (request, response) => {
 
         return response.status(200).json({
             status: "SUCCESS",
-            message: "Payment marked as paid",
+            message: "Payment paid Successfully",
             data: result
         });
 

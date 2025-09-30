@@ -24,8 +24,8 @@ const addFollowUp = require("../controller/followup/add-follow-up");
 const updateFollowUp = require("../controller/followup/update-follow-up");
 const approveFollowUp = require("../controller/followup/approve-follow-up");
 const rejectFollowUp = require("../controller/followup/reject-follow-up");
-const getAssignList = require("../controller/assign/assign-list");
-const createAssign = require("../controller/assign/create-assign");
+
+
 const createGenerationLog = require("../controller/generation-log/create-log-generation");
 const addPayment = require("../controller/payment/add-payment");
 const updatePayment = require("../controller/payment/update-payment");
@@ -34,6 +34,12 @@ const getPayments = require("../controller/payment/get-payment");
 const deletePayment = require("../controller/payment/delete-payment");
 const markPaymentPaid = require("../controller/payment/mark-payment-paid");
 const getPaymentList = require("../controller/payment/get-payment-list");
+const createAssign = require("../controller/assign/lead-assign");
+const getAssignList = require("../controller/assign/lead-assign-list");
+const updateAssign = require("../controller/assign/update-lead-assign");
+const deleteAssign = require("../controller/assign/delete-lead-assign");
+const downloadPaymentReceipt = require("../controller/payment/download-payment-receipt");
+
 
 
 
@@ -53,8 +59,10 @@ adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
 
 // assign routes
-adminRouter.post("/assign-list", authenticateAdminJwt, getAssignList);
-adminRouter.post("/create-assign", authenticateAdminJwt, createAssign);
+adminRouter.post("/lead-assign-list", authenticateAdminJwt, getAssignList);
+adminRouter.post("/lead-assign", authenticateAdminJwt, createAssign);
+adminRouter.post("/update-lead-assign", authenticateAdminJwt, updateAssign);
+adminRouter.post("/delete-lead-assign", authenticateAdminJwt, deleteAssign);
 
 //quotation routes
 
@@ -87,7 +95,7 @@ adminRouter.post("/add-payment", authenticateAdminJwt, addPayment);
 adminRouter.post("/update-payment", authenticateAdminJwt, updatePayment);
 adminRouter.post("/delete-payment", authenticateAdminJwt, deletePayment);
 adminRouter.post("/get-payment-list", authenticateAdminJwt, getPaymentList);
-// adminRouter.post("/get-payment", authenticateAdminJwt, );
+adminRouter.post("/download-payment-receipt", authenticateAdminJwt, downloadPaymentReceipt);
 adminRouter.get("/get-payment", authenticateAdminJwt, getPayments);
 adminRouter.post("/get-payment-by-id", authenticateAdminJwt, getPaymentById);
 adminRouter.post("/mark-payment-paid", authenticateAdminJwt, markPaymentPaid);
