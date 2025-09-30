@@ -1,51 +1,58 @@
 const jwt = require('jsonwebtoken');
 const adminService = require('../../services/admin.service');
 
+
 const authenticateAdminJWT = async (req, res, next) => {
     try {
-        const authHeader = req.header('authorization');
-        if (!authHeader) {
-            return res.status(200).json({
+        const authHeader = req.headers["authorization"] || req.headers["Authorization"];
+
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({
                 status: "JWT_INVALID",
-                message: "Your session has ended. Please login again."
+                message: "Token missing. Please login again."
             });
         }
 
-        const token = authHeader.split(' ')[1];
+        const token = authHeader.split(" ")[1];
+        let decoded;
 
-        // Verify token synchronously
-        let adminObject;
         try {
-            adminObject = jwt.verify(token, process.env.JWT_SECRET_KEY);
+            decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         } catch (err) {
-            return res.status(200).json({
+            const msg = err.name === "TokenExpiredError"
+                ? "Session expired. Please login again."
+                : "Invalid token. Please login again.";
+
+            return res.status(401).json({
                 status: "JWT_INVALID",
-                message: "Your session has ended. Please login again."
+                message: msg
             });
         }
 
-        // Check if admin exists
-        const doesAdminExist = await adminService.getAdminById(adminObject.adminId);
-        if (!doesAdminExist) {
-            return res.status(200).json({
+        // Fetch admin from DB to confirm still exists
+        const admin = await adminService.getAdminById(decoded.adminId);
+
+        if (!admin) {
+            console.log("JWT valid but admin missing:", decoded);
+            return res.status(401).json({
                 status: "JWT_INVALID",
-                message: "Your session has ended. Please login again."
+                message: "Admin does not exist. Please login again."
             });
         }
 
         // Attach admin info to request
-        req.adminId = adminObject.adminId;
-        req.id = doesAdminExist.id;
-        req.mobile = doesAdminExist.mobile;
+        req.admin = admin;
+        req.adminId = admin.id;
 
-        next(); // allow request to proceed
-
+        next(); // proceed
     } catch (error) {
+        console.error("JWT middleware error:", error);
         return res.status(500).json({
             status: "FAILED",
             message: error.message
         });
     }
 };
+
 
 module.exports = authenticateAdminJWT;

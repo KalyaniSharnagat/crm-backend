@@ -48,10 +48,29 @@ exports.leadIdValidationSchema = Joi.object({
 });
 
 //?==================== assign =======================
-const createAssignValidationSchema = Joi.object({
-    leadId: Joi.number().integer().required().messages({ "any.required": "leadId is required", "number.base": "leadId must be a number", "number.integer": "leadId must be an integer" }),
-    assignTo: Joi.number().integer().required().messages({ "any.required": "assignTo is required", "number.base": "assignTo must be a number", "number.integer": "assignTo must be an integer" })
+exports.createAssignValidationSchema = Joi.object({
+    leadId: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "any.required": "Lead ID is required",
+            "number.base": "Lead ID must be a number",
+            "number.integer": "Lead ID must be an integer",
+            "number.positive": "Lead ID must be positive",
+        }),
+    assignTo: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "any.required": "AssignTo user ID is required",
+            "number.base": "AssignTo must be a number",
+            "number.integer": "AssignTo must be an integer",
+            "number.positive": "AssignTo must be positive",
+        })
 });
+
 //?======================  work ======================
 
 
@@ -136,7 +155,10 @@ exports.updateFollowUpValidationSchema = Joi.object({
     notes: Joi.string().allow("", null).optional().messages({ "string.base": "Notes must be text" }),
     status: Joi.string().valid("Scheduled", "Done", "Pending", "Cancelled", "Approved", "Rejected").optional().messages({ "any.only": "Status must be one of Scheduled, Done, Pending, Cancelled, Approved, Rejected" }),
     responseText: Joi.string().allow("", null).optional().messages({ "string.base": "Response must be text" }),
-    assignedTo: Joi.number().integer().optional().messages({ "number.base": "AssignedTo must be a user id (number)" })
+    assignedTo: Joi.number().integer().optional().messages({ "number.base": "AssignedTo must be a user id (number)" }),
+    projectName: Joi.string().allow(null, ""),
+    clientName: Joi.string().allow(null, ""),
+    followUpByName: Joi.string().allow(null, ""),
 });
 
 //?========================approve followup===================
@@ -173,4 +195,8 @@ exports.updatePaymentValidationSchema = Joi.object({
     status: Joi.string().valid("Pending", "Partially Paid", "Completed").optional(),
     paidDate: Joi.date().optional(),
     paymentId: Joi.string().optional()
+});
+
+exports.downloadPaymentReceiptValidationSchema = Joi.object({
+    paymentId: Joi.string().required().messages({ "string.empty": "Payment ID is required", "any.required": "Payment ID is required", }),
 });
