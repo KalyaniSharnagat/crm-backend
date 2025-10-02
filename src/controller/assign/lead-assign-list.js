@@ -1,3 +1,4 @@
+// controllers/assignList.controller.js
 const assignService = require("../../services/assign.service");
 
 const getAssignList = async (req, res) => {
@@ -19,12 +20,8 @@ const getAssignList = async (req, res) => {
             pagination: list.pagination,
         });
     } catch (error) {
-        return res.status(500).json({
-            status: "FAILED",
-            message: error.message,
-        });
+        return res.status(500).json({ status: "FAILED", message: error.message });
     }
 };
-
 
 module.exports = getAssignList;

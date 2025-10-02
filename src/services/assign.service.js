@@ -15,12 +15,13 @@ const assignService = {
 
         // Filters
         const where = {};
-        if (assignedTo) where.assignTo = assignedTo;
+        if (assignedTo) where.assignedTo = assignedTo;
         if (leadId) where.leadId = leadId;
 
         // Search filter
         const leadWhere = {};
         if (search) {
+            const { Op } = require("sequelize");
             leadWhere[Op.or] = [
                 { name: { [Op.iLike]: `%${search}%` } },
                 { email: { [Op.iLike]: `%${search}%` } },
@@ -31,7 +32,12 @@ const assignService = {
         const { rows, count } = await Assign.findAndCountAll({
             where,
             include: [
-                { model: Lead, as: "lead", where: leadWhere, required: true } // join with lead
+                {
+                    model: require("../models/lead.model"),
+                    as: "lead",
+                    where: Object.keys(leadWhere).length ? leadWhere : undefined,
+                    required: search ? true : false,
+                }
             ],
             limit,
             offset,
@@ -48,6 +54,7 @@ const assignService = {
             },
         };
     },
+
 
 
     getAssignById: async (id) => {

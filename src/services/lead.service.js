@@ -4,7 +4,16 @@ const { Op } = require('sequelize');
 const leadService = {
 
     createLead: async (data) => {
-        return await Lead.create(data);
+        // Foreign key check: assignedTo agar hai to Admin me exist karna chahiye
+        if (data.assignedTo) {
+            const admin = await require("../models/admin.model").findByPk(data.assignedTo);
+            if (!admin) {
+                throw new Error("Assigned user not found in Admin table");
+            }
+        }
+
+        const lead = await Lead.create(data);
+        return lead;
     },
 
     // Find lead by email
@@ -44,10 +53,11 @@ const leadService = {
     },
 
     getLeadList: async (page = 1, limit = 10, searchString = "") => {
-        const offset = (page - 1) * limit;
+        const pageNumber = Math.max(1, parseInt(page));
+        const offset = (pageNumber - 1) * limit;
 
         const where = {};
-        if (searchString) {
+        if (searchString && searchString.trim() !== "") {
             where[Op.or] = [
                 { name: { [Op.iLike]: `%${searchString}%` } },
                 { email: { [Op.iLike]: `%${searchString}%` } },
@@ -59,11 +69,12 @@ const leadService = {
 
         return await Lead.findAndCountAll({
             where,
-            limit,
+            limit: parseInt(limit),
             offset,
             order: [["createdAt", "DESC"]],
         });
     },
+
 
 
     getLeadById: async (leadId) => {
