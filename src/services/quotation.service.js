@@ -20,22 +20,18 @@ const quotationService = {
         }
     },
 
-    updateQuotation: async (quotationId, updateData) => {
+    updateQuotation: async (id, dataToUpdate) => {
         try {
-            const [updatedRowsCount] = await Quotation.update(updateData, {
-                where: { id: quotationId }
-            });
+            const quotation = await Quotation.findByPk(id);
+            if (!quotation) return null;
 
-            if (updatedRowsCount > 0) {
-                return await Quotation.findByPk(quotationId);
-            }
-            return null;
+            await quotation.update(dataToUpdate); // Sequelize instance update
+            return quotation;
         } catch (error) {
             console.error("Error in updateQuotation:", error);
             throw error;
         }
     },
-
     saveQuotationImages: async function (dataToInsert) {
         try {
             return await QuotationImages.bulkCreate(dataToInsert)

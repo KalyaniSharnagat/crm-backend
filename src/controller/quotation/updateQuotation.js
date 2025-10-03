@@ -5,24 +5,25 @@ const updateQuotation = async (request, response) => {
     try {
         const { id, quotationNo, clientName, clientCompany, validUntil, amount, items, status } = request.body;
 
-        // Check validation
-        const validationResult = await updateQuotationValidationSchema.validate({ id, quotationNo, clientName, clientCompany, validUntil, amount, items, status }, { abortEarly: true });
+        // Validation
+        const validationResult = await updateQuotationValidationSchema.validate(
+            { id, quotationNo, clientName, clientCompany, validUntil, amount, items, status },
+            { abortEarly: true }
+        );
+
         if (validationResult.error) {
-            response.status(200).json({
+            return response.status(200).json({
                 status: "FAILED",
                 message: validationResult?.error?.details[0]?.message,
             });
-            return;
         }
 
-        // Check if quotation exists
         const isQuotationExist = await quotationService.getQuotationById(id);
         if (!isQuotationExist) {
-            response.status(200).json({
+            return response.status(200).json({
                 status: "FAILED",
                 message: "Quotation not found",
             });
-            return;
         }
 
         const dataToUpdate = {
@@ -34,27 +35,27 @@ const updateQuotation = async (request, response) => {
             items: items || [],
             status: status || "Draft",
             updatedBy: request.user?.id || "admin",
-        }
+        };
 
-        const result = await quotationService.updateQuotation(id, dataToUpdate);
-        if (result) {
-            response.status(200).json({
+        const updatedQuotation = await quotationService.updateQuotation(id, dataToUpdate);
+
+        if (updatedQuotation) {
+            return response.status(200).json({
                 status: "SUCCESS",
                 message: "Quotation updated successfully",
+                data: updatedQuotation,
             });
-            return;
         } else {
-            response.status(400).json({
+            return response.status(400).json({
                 status: "FAILED",
                 message: "Failed to update quotation, Please try again!",
             });
-            return;
         }
     } catch (error) {
         return response.status(500).json({
             status: "FAILED",
-            message: error.message
-        })
+            message: error.message,
+        });
     }
 };
 
