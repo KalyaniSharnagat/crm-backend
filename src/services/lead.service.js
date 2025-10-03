@@ -11,7 +11,6 @@ const leadService = {
                 throw new Error("Assigned user not found in Admin table");
             }
         }
-
         const lead = await Lead.create(data);
         return lead;
     },
@@ -29,7 +28,6 @@ const leadService = {
             });
 
             if (updatedRowsCount === 0) {
-                // No rows updated (invalid ID)
                 return null;
             }
             // Fetch and return the updated lead

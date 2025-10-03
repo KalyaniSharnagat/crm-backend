@@ -1,21 +1,23 @@
-const leadServices = require("../../services/lead.service");
-const notificationService = require("../../services/notification.service");
+const notificationService = require('../../services/notification.service');
 
-const LeadAddedNotification = async (dataToInsert, userId = null) => {
+const leadAddedNotification = async (req, res) => {
     try {
-        // Step 1: Create the lead first
-        const lead = await leadServices.createLead(dataToInsert);
+        const leadData = req.body;
+        const result = await notificationService.leadAdded(leadData);
 
-        // Step 2: Trigger notification after successful creation
-        await notificationService.leadAdded(lead, userId);
-
-        console.log(`Notification created for Lead ID: ${lead.id}`);
-
-        return lead; // optional: return the created lead
+        res.status(200).json({
+            status: "SUCCESS",
+            message: "Lead notification sent",
+            data: result,
+        });
     } catch (error) {
         console.error("Error creating lead notification:", error);
-        throw error; // so that controller can handle it
+        res.status(500).json({
+            status: "FAILED",
+            message: "Error creating lead notification",
+            error: error.message,
+        });
     }
 };
 
-module.exports = LeadAddedNotification;
+module.exports = leadAddedNotification;
