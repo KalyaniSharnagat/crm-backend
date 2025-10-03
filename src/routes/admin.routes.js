@@ -41,13 +41,19 @@ const deleteAssign = require("../controller/assign/delete-lead-assign");
 const downloadPaymentReceipt = require("../controller/payment/download-payment-receipt");
 const getAdminList = require("../controller/admin/get-list-admin");
 const createNotification = require("../controller/notification/add-lead-notification");
-const LeadAddedNotification = require("../controller/notification/add-lead-notification");
+
 const createUser = require("../controller/user/add-user");
 const getUserList = require("../controller/user/get-user-list");
 const updateUser = require("../controller/user/update-user");
 const deleteUser = require("../controller/user/delete-user");
 const toggleUserStatus = require("../controller/user/toggle-status");
 const getUserById = require("../controller/user/get-user-by-id");
+const ApproveLeadNotification = require("../controller/notification/approve-lead-notification");
+const QuotationAddNotification = require("../controller/notification/add-quotation-notification");
+const DeleteNotification = require("../controller/notification/delete-notification");
+const getAllNotification = require("../controller/notification/get-all-notification");
+const leadAddedNotification = require("../controller/notification/add-lead-notification");
+const getNotificationById = require("../controller/notification/get-notificaction-by-id");
 
 
 
@@ -123,7 +129,12 @@ adminRouter.post("/mark-payment-paid", authenticateAdminJwt, markPaymentPaid);
 
 
 // notification route
-adminRouter.post("/add-lead-notification", authenticateAdminJwt, LeadAddedNotification);
+adminRouter.post("/add-lead-notification", authenticateAdminJwt, leadAddedNotification);
+adminRouter.post("/approve-lead-notification", authenticateAdminJwt, ApproveLeadNotification);
+adminRouter.post("/add-quotation-notification", authenticateAdminJwt, QuotationAddNotification);
+adminRouter.post("/delete-notification", authenticateAdminJwt, DeleteNotification);
+adminRouter.get("/get-all-notification", authenticateAdminJwt, getAllNotification);
+adminRouter.get("/get-notification-by-id", authenticateAdminJwt, getNotificationById);
 
 
 module.exports = adminRouter;

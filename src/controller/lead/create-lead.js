@@ -1,4 +1,3 @@
-// controllers/lead.controller.js
 const leadService = require("../../services/lead.service");
 const { createLeadValidationSchema } = require("../../utils/validation/admin.validation");
 
