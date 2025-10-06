@@ -1,14 +1,14 @@
 const paymentService = require("../../services/payment.service");
 const { downloadPaymentReceiptValidationSchema } = require("../../utils/validation/admin.validation");
 
-const downloadPaymentReceipt = async (req, res) => {
+const downloadPaymentReceipt = async (request, response) => {
     try {
-        const { paymentId } = req.body;
+        const { paymentId } = request.body;
 
         // Validation
         const { error } = downloadPaymentReceiptValidationSchema.validate({ paymentId });
         if (error) {
-            return res.status(200).json({
+            return response.status(200).json({
                 status: "FAILED",
                 message: error.details[0].message,
             });
@@ -16,16 +16,16 @@ const downloadPaymentReceipt = async (req, res) => {
 
         const result = await paymentService.downloadReceipt(paymentId);
         if (!result) {
-            return res.status(200).json({ status: "FAILED", message: "Payment not found" });
+            return response.status(200).json({ status: "FAILED", message: "Payment not found" });
         }
-        paymentService.generateReceiptPDF(result.payment, res);
+        paymentService.generateReceiptPDF(result.payment, response);
 
 
         // PDF generate karke directly download karta hai
-        paymentService.generateReceiptPDF(result.payment, res);
+        paymentService.generateReceiptPDF(result.payment, response);
 
     } catch (err) {
-        return res.status(500).json({ status: "FAILED", message: err.message });
+        return response.status(500).json({ status: "FAILED", message: err.message });
     }
 };
 

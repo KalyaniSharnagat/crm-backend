@@ -19,7 +19,6 @@ const updateFollowUp = async (request, response) => {
             });
         }
 
-        // Check followup exist
         const isFollowUpExist = await followUpService.getFollowUpById(id);
         if (!isFollowUpExist) {
             return response.status(200).json({
@@ -29,8 +28,6 @@ const updateFollowUp = async (request, response) => {
         }
 
         // ================= Check if lead exists =================
-
-
         const isLeadExist = await leadServices.getLeadById(leadId);
         console.log("--------", isLeadExist);
         if (!isLeadExist) {
@@ -40,8 +37,7 @@ const updateFollowUp = async (request, response) => {
             });
         }
 
-
-        // Prepare update data
+        // update data
         const dataToUpdate = { projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, status };
 
         const result = await followUpService.updateFollowUp(id, dataToUpdate);

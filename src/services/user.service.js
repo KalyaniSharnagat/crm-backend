@@ -1,4 +1,3 @@
-
 const User = require("../models/user.model");
 const { Op } = require("sequelize");
 
@@ -47,6 +46,22 @@ const userService = {
     },
     deleteUser: async (id) => {
         return await User.destroy({ where: { id } });
+    },
+
+    getUserAssignList: async ({ search }) => {
+        const where = {};
+
+        if (search && search.trim() !== "") {
+            where.username = { [Op.iLike]: `%${search}%` };
+        }
+
+        const users = await User.findAll({
+            where,
+            attributes: ["id", "username", "mobile"],
+            order: [["username", "ASC"]],
+        });
+
+        return users;
     },
 };
 
