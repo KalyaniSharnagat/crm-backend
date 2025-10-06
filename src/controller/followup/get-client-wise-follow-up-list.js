@@ -5,16 +5,13 @@ const getClientWiseFollowUpList = async (request, response) => {
     try {
         const { leadId, status, fromDate, toDate } = request.body;
 
-        // 🔹 Fetch all follow-ups first
-        let allFollowUps = await followUpService.getAllFollowUps(); // <-- ✅ new service call
+        let allFollowUps = await followUpService.getAllFollowUps();
 
-        // Calculate global totals
         const totalFollowUps = allFollowUps.length;
         const totalApproved = allFollowUps.filter(f => f.status?.toLowerCase() === "approved").length;
         const totalRejected = allFollowUps.filter(f => f.status?.toLowerCase() === "rejected").length;
         const totalPending = allFollowUps.filter(f => f.status?.toLowerCase() === "pending").length;
 
-        // If a specific leadId is provided, filter it
         let followUps = allFollowUps;
         let clientName = "All Clients";
         let projectName = "";
@@ -32,7 +29,6 @@ const getClientWiseFollowUpList = async (request, response) => {
             followUps = followUps.filter(f => f.leadId == leadId);
         }
 
-        // Apply status/date filters if provided
         if (status) {
             followUps = followUps.filter(f => f.status?.toLowerCase() === status.toLowerCase());
         }
@@ -53,11 +49,11 @@ const getClientWiseFollowUpList = async (request, response) => {
                 leadId: leadId || null,
                 clientName,
                 projectName,
-                totalFollowUps,     // ✅ total across ALL leads
+                totalFollowUps,
                 approved: totalApproved,
                 rejected: totalRejected,
                 pending: totalPending,
-                filteredCount: followUps.length,
+                filteredCount: followUps.length,   // only 2 match this leadId
                 followUpList: followUps,
             },
         });
