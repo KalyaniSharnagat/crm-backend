@@ -53,11 +53,11 @@ const QuotationAddNotification = require("../controller/notification/add-quotati
 const DeleteNotification = require("../controller/notification/delete-notification");
 const getAllNotification = require("../controller/notification/get-all-notification");
 const leadAddedNotification = require("../controller/notification/add-lead-notification");
-const getNotificationById = require("../controller/notification/get-notificaction-by-id");
 const assignLead = require("../controller/assign/lead-assign");
 const getTotalLeadsCount = require("../controller/lead/get-status-wise-lead-list");
 const getClientWiseFollowUpList = require("../controller/followup/get-client-wise-follow-up-list");
 const getUserAssignList = require("../controller/user/get-user-assign-list");
+const getNotificationById = require("../controller/notification/get-notification-by-id");
 
 
 
@@ -82,7 +82,7 @@ adminRouter.post("/update-user", authenticateAdminJwt, updateUser);
 adminRouter.post("/delete-user", authenticateAdminJwt, deleteUser);
 adminRouter.post("/get-user-by-id", authenticateAdminJwt, getUserById);
 adminRouter.post("/toggle-status", authenticateAdminJwt, toggleUserStatus);
-adminRouter.get("/get-user-assign-list", authenticateAdminJwt, getUserAssignList);
+adminRouter.post("/get-user-assign-list", authenticateAdminJwt, getUserAssignList);
 
 
 //lead routes
@@ -144,7 +144,7 @@ adminRouter.post("/approve-lead-notification", authenticateAdminJwt, ApproveLead
 adminRouter.post("/add-quotation-notification", authenticateAdminJwt, QuotationAddNotification);
 adminRouter.post("/delete-notification", authenticateAdminJwt, DeleteNotification);
 adminRouter.get("/get-all-notification", authenticateAdminJwt, getAllNotification);
-adminRouter.get("/get-notification-by-id", authenticateAdminJwt, getNotificationById);
+adminRouter.post("/get-notification-by-id", authenticateAdminJwt, getNotificationById);
 
 
 module.exports = adminRouter;

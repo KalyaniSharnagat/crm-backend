@@ -5,7 +5,7 @@ const getNotificationById = async (request, response) => {
         const { id } = request.body;
 
         if (!id) {
-            return res.status(400).json({
+            return response.status(400).json({
                 status: "FAILED",
                 message: "Notification ID is required"
             });

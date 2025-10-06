@@ -17,19 +17,20 @@ const notificationService = {
             id: notifications.length + 1,
             type: "lead",
             action: "added",
-            message: `Lead added: ${leadData.name}`,
+            message: `Lead added By: ${leadData.clientName}`,
             data: leadData,
             createdAt: new Date(),
         };
         notifications.push(notification);
         return notification;
     },
+
     leadApproved: async (leadData) => {
         const notification = {
             id: notifications.length + 1,
             type: "lead",
             action: "approved",
-            message: `Lead approved: ${leadData.name}`,
+            message: `Lead approved By: ${leadData.clientName}`,
             data: leadData,
             createdAt: new Date(),
         };
@@ -41,7 +42,7 @@ const notificationService = {
             id: notifications.length + 1,
             type: "quotation",
             action: "added",
-            message: `Quotation added for: ${quotationData.clientName}`,
+            message: `Quotation added By: ${quotationData.clientName}`,
             data: quotationData,
             createdAt: new Date(),
         };

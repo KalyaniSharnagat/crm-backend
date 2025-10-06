@@ -1,10 +1,10 @@
 const notificationService = require('../../services/notification.service');
 
-const getAllNotification = async (req, res) => {
+const getAllNotification = async (request, response) => {
     try {
         const allNotifications = await notificationService.getAllNotifications();
 
-        res.status(200).json({
+        response.status(200).json({
             status: "SUCCESS",
             message: "All notifications fetched successfully",
             data: allNotifications,
