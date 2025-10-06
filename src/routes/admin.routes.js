@@ -57,6 +57,7 @@ const getNotificationById = require("../controller/notification/get-notificactio
 const assignLead = require("../controller/assign/lead-assign");
 const getTotalLeadsCount = require("../controller/lead/get-status-wise-lead-list");
 const getClientWiseFollowUpList = require("../controller/followup/get-client-wise-follow-up-list");
+const getUserAssignList = require("../controller/user/get-user-assign-list");
 
 
 
@@ -81,6 +82,7 @@ adminRouter.post("/update-user", authenticateAdminJwt, updateUser);
 adminRouter.post("/delete-user", authenticateAdminJwt, deleteUser);
 adminRouter.post("/get-user-by-id", authenticateAdminJwt, getUserById);
 adminRouter.post("/toggle-status", authenticateAdminJwt, toggleUserStatus);
+adminRouter.get("/get-user-assign-list", authenticateAdminJwt, getUserAssignList);
 
 
 //lead routes

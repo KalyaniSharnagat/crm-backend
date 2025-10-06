@@ -21,7 +21,7 @@ const addPayment = async (request, response) => {
             });
         }
 
-        // normalize payment method
+        // payment method
         const allowedMethods = ["Cash", "Card", "UPI", "Bank Transfer", "Cheque"];
         const method = allowedMethods.find(m => m.toLowerCase() === paymentMethod?.trim().toLowerCase());
         if (!method) {
