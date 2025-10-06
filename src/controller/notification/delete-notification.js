@@ -15,7 +15,7 @@ const DeleteNotification = async (request, response) => {
 
         response.status(200).json({
             status: "SUCCESS",
-            message: "Delete notification sent",
+            message: "Delete notification sent Successfully.",
             data: result,
         });
     } catch (error) {

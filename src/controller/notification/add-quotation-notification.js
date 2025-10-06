@@ -1,19 +1,18 @@
 const notificationService = require('../../services/notification.service');
 
-const QuotationNotification = async (req, res) => {
+const QuotationNotification = async (request, response) => {
     try {
-        const quotationData = req.body;
-
+        const quotationData = request.body;
         const result = await notificationService.quotationAdded(quotationData);
 
-        res.status(200).json({
+        response.status(200).json({
             status: "SUCCESS",
-            message: "Quotation notification sent",
+            message: "Quotation notification sent Successfully",
             data: result,
         });
     } catch (error) {
         console.error("Error sending quotation notification:", error);
-        res.status(500).json({
+        response.status(500).json({
             status: "FAILED",
             message: "Error sending quotation notification",
             error: error.message,
