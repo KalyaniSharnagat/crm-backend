@@ -17,10 +17,16 @@ const paymentService = {
         return await Payment.findByPk(id)
     },
     updatePayment: async (id, data) => {
-        const payment = await Payment.findByPk(id);
-        if (!payment) return null;
-        // await payment.update(data);
-        return payment;
+        const [updated] = await Payment.update(data, {
+            where: { id },
+        });
+
+        if (updated) {
+            const updatedPayment = await Payment.findByPk(id);
+            return updatedPayment; // ✅ return updated record
+        }
+
+        return null;
     },
 
     downloadReceipt: async (paymentId) => {

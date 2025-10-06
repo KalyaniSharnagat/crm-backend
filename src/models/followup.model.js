@@ -41,7 +41,7 @@ const FollowUp = sequelize.define(
 
         status: {
             type: DataTypes.ENUM("Pending", "Rejected", "Approved"),
-            defaultValue: "Scheduled",
+            defaultValue: "Pending",
         },
 
         // notes: {

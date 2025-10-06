@@ -50,6 +50,13 @@ const followUpService = {
         return rowsUpdated ? updatedFollowUp : null;
     },
 
+    getFollowUpsByLeadId: async (leadId) => {
+        return await FollowUp.findAll({
+            where: { leadId },
+            order: [["followUpDate", "DESC"]],
+        });
+    },
+
 };
 
 module.exports = followUpService

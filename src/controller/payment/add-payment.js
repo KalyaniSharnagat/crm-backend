@@ -6,11 +6,11 @@ const generatePaymentId = require("../../utils/helper/generate-payment-id")
 
 const addPayment = async (request, response) => {
     try {
-        const { projectName, clientName, paymentId, installmentNo, dueDate, amount, paymentMethod, installmentCount, totalAmount, notes } = request.body;
+        const { projectName, clientName, paymentId, installmentNo, dueDate, amount, paymentMethod, installmentCount, givenTo, paidAmount, remainingAmount, totalAmount, notes } = request.body;
 
         // validation
         const validationResult = await createPaymentValidationSchema.validate(
-            { projectName, clientName, paymentId, installmentNo, dueDate, amount, paymentMethod, installmentCount, totalAmount, notes },
+            { projectName, clientName, paymentId, installmentNo, dueDate, amount, paymentMethod, installmentCount, givenTo, paidAmount, remainingAmount, totalAmount, notes },
             { abortEarly: true }
         );
 
@@ -32,7 +32,7 @@ const addPayment = async (request, response) => {
         }
 
         // prepare data
-        const dataToInsert = { projectName, clientName, paymentId: paymentId || generatePaymentId(), installmentNo, dueDate, amount, paymentMethod: method, installmentCount, totalAmount, notes, status: "Pending" };
+        const dataToInsert = { projectName, clientName, paymentId: paymentId || generatePaymentId(), installmentNo, dueDate, amount, paymentMethod: method, installmentCount, givenTo, paidAmount, remainingAmount, totalAmount, notes, status: "Pending" };
 
         const result = await paymentService.createPayment(dataToInsert);
 
