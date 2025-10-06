@@ -57,6 +57,10 @@ const followUpService = {
         });
     },
 
+    getAllFollowUps: async () => {
+        return await FollowUp.findAll();
+    },
+
 };
 
 module.exports = followUpService
