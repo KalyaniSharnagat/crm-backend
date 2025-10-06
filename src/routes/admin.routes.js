@@ -56,6 +56,7 @@ const leadAddedNotification = require("../controller/notification/add-lead-notif
 const getNotificationById = require("../controller/notification/get-notificaction-by-id");
 const assignLead = require("../controller/assign/lead-assign");
 const getTotalLeadsCount = require("../controller/lead/get-status-wise-lead-list");
+const getClientWiseFollowUpList = require("../controller/followup/get-client-wise-follow-up-list");
 
 
 
@@ -118,6 +119,7 @@ adminRouter.post("/add-follow-up", authenticateAdminJwt, addFollowUp);
 adminRouter.post("/update-follow-up", authenticateAdminJwt, updateFollowUp);
 adminRouter.post("/approve-follow-up", authenticateAdminJwt, approveFollowUp);
 adminRouter.post("/reject-follow-up", authenticateAdminJwt, rejectFollowUp);
+adminRouter.get("/get-client-wise-follow-up-list", authenticateAdminJwt, getClientWiseFollowUpList);
 
 
 // log-generation route

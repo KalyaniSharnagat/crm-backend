@@ -6,11 +6,11 @@ const { updatePaymentValidationSchema } = require("../../utils/validation/admin.
 const updatePayment = async (request, response) => {
     try {
         // extract data from request body
-        const { id, projectName, clientName, installmentNo, dueDate, amount, paymentMethod, installmentCount, totalAmount, notes, status, paidDate } = request.body;
+        const { id, projectName, clientName, installmentNo, dueDate, amount, paymentMethod, installmentCount, givenTo, paidAmount, remainingAmount, totalAmount, notes, status } = request.body;
 
         // check validation
         const validationResult = await updatePaymentValidationSchema.validate(
-            { id, projectName, clientName, installmentNo, dueDate, amount, paymentMethod, installmentCount, totalAmount, notes, status, paidDate },
+            { id, projectName, clientName, installmentNo, dueDate, amount, paymentMethod, installmentCount, givenTo, paidAmount, remainingAmount, totalAmount, notes, status },
             { abortEarly: true }
         );
 
@@ -40,10 +40,12 @@ const updatePayment = async (request, response) => {
             amount,
             paymentMethod,
             installmentCount,
+            givenTo,
+            paidAmount,
+            remainingAmount,
             totalAmount,
             notes,
-            status,
-            paidDate
+            status
         };
 
         // update payment in DB & send response

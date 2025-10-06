@@ -57,7 +57,22 @@ const Payment = sequelize.define('Payment', {
             min: 1,
         },
     },
+    paidAmount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+    },
 
+    remainingAmount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 0,
+    },
+
+    givenTo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     totalAmount: {
         type: DataTypes.FLOAT,
         allowNull: false,
