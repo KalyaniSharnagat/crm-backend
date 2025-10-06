@@ -2,7 +2,7 @@ const userService = require("../../services/user.service");
 
 const getUserAssignList = async (request, response) => {
     try {
-        const search = request.query.search || request.body.search || "";
+        const search = request.body.search || request.body.search || "";
 
         const users = await userService.getUserAssignList({ search });
 
