@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/db");
+const Lead = require("./lead.model");
 
 const FollowUp = sequelize.define(
     "FollowUp",
@@ -122,4 +123,5 @@ const FollowUp = sequelize.define(
     }
 );
 
+FollowUp.belongsTo(Lead, { foreignKey: "leadId", as: "lead", onDelete: "CASCADE", onUpdate: "CASCADE" });
 module.exports = FollowUp;
