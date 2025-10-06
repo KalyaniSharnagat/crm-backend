@@ -3,10 +3,10 @@ const { createLeadValidationSchema } = require("../../utils/validation/admin.val
 
 const createLead = async (req, res) => {
     try {
-        const { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, interestPercentage } = req.body;
+        const { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, date, startDate, endDate, interestPercentage } = req.body;
 
         const validationResult = createLeadValidationSchema.validate(
-            { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, interestPercentage },
+            { name, email, mobile, company, status, assignedTo, leadSource, notes, projectName, date, startDate, endDate, interestPercentage },
             { abortEarly: true }
         );
 
@@ -24,12 +24,15 @@ const createLead = async (req, res) => {
             email,
             mobile,
             company,
-            status: status || "new",
+            status: status || "Approved",
             assignedTo: assignedTo || null,
             leadSource,
             notes,
             projectName,
-            interestPercentage,
+            date,
+            startDate,
+            endDate,
+            interestPercentage
         });
 
         return res.status(200).json({ status: "SUCCESS", message: "Lead added successfully", data: lead });

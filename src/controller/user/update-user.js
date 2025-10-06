@@ -1,13 +1,12 @@
-const bcrypt = require("bcrypt");
 const userService = require("../../services/user.service");
 const { updateUserValidationSchema } = require("../../utils/validation/admin.validation");
 
 const updateUser = async (request, response) => {
     try {
-        const { id, username, email, password, mobile, role, status } = request.body;
+        const { id, username, email, mobile, role, status } = request.body;
 
         const validationResult = await updateUserValidationSchema.validate(
-            { id, username, email, password, mobile: mobile?.toString(), role, status },
+            { id, username, email, mobile: mobile?.toString(), role, status },
             { abortEarly: true }
         );
 
@@ -35,6 +34,27 @@ const updateUser = async (request, response) => {
                 });
             }
         }
+        const allowedRoles = [
+            "Admin",
+            "Manager",
+            "Sales Team",
+            "Team Leader",
+            "Director",
+            "Tech Head",
+            "CEO",
+            "Sales Head",
+            "HR"
+        ];
+        const userRole = role
+            ? allowedRoles.find(r => r.toLowerCase() === role.trim().toLowerCase())
+            : "Admin"; // default role
+
+        if (!userRole) {
+            return response.status(200).json({
+                status: "FAILED",
+                message: `Invalid role. Allowed roles are: ${allowedRoles.join(", ")}`
+            });
+        }
 
         const statusBool = status === "enable";
         const dataToUpdate = {
@@ -45,9 +65,6 @@ const updateUser = async (request, response) => {
             status: status ? statusBool : user.status,
         };
 
-        if (password) {
-            dataToUpdate.password = await bcrypt.hash(password, 12);
-        }
 
         await userService.updateUser(id, dataToUpdate);
 

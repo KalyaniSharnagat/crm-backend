@@ -1,26 +1,29 @@
-// controllers/assignList.controller.js
 const assignService = require("../../services/assign.service");
 
 const getAssignList = async (req, res) => {
     try {
-        const { assignedTo, leadId, page = 1, limit = 10, search } = req.query;
+        const { page = 1, limit = 10, search = "" } = req.query;
 
-        const list = await assignService.getAssignList({
-            assignedTo,
-            leadId,
-            search,
-            page: parseInt(page),
-            limit: parseInt(limit),
-        });
+        const { leads, count, page: currentPage, limit: pageSize } =
+            await assignService.getAssignedLeadlist({ page, limit, search });
 
         return res.status(200).json({
             status: "SUCCESS",
-            message: "Assigned list fetched successfully",
-            data: list.data,
-            pagination: list.pagination,
+            message: "Assigned leads fetched successfully",
+            pagination: {
+                totalRecords: count,
+                totalPages: Math.ceil(count / pageSize),
+                currentPage,
+                pageSize,
+            },
+            data: leads,
         });
     } catch (error) {
-        return res.status(500).json({ status: "FAILED", message: error.message });
+        return res.status(500).json({
+            status: "FAILED",
+            message: "Error fetching assigned leads",
+            error: error.message,
+        });
     }
 };
 

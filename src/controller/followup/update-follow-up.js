@@ -4,11 +4,11 @@ const { updateFollowUpValidationSchema } = require("../../utils/validation/admin
 
 const updateFollowUp = async (request, response) => {
     try {
-        const { id, leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, responseText, assignedTo } = request.body;
+        const { id, leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, status, } = request.body;
 
         // Validation
         const validationResult = await updateFollowUpValidationSchema.validate(
-            { id, leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, responseText, assignedTo },
+            { id, leadId, projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, status },
             { abortEarly: true }
         );
 
@@ -42,7 +42,7 @@ const updateFollowUp = async (request, response) => {
 
 
         // Prepare update data
-        const dataToUpdate = { projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, notes, status, response: responseText, assignedTo };
+        const dataToUpdate = { projectName, clientName, followUpByName, followUpDate, nextFollowUpDate, mode, status };
 
         const result = await followUpService.updateFollowUp(id, dataToUpdate);
 

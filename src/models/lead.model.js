@@ -66,8 +66,33 @@ const Lead = sequelize.define("Lead", {
         allowNull: true
     },
 
-    projectName: { type: DataTypes.STRING, allowNull: true },
-    interestPercentage: { type: DataTypes.INTEGER, allowNull: true, validate: { min: 0, max: 100, isInt: true } },
+    projectName: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    date: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    startDate: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
+    endDate: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
+
+    interestPercentage: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        validate: {
+            min: 0, max: 100,
+            isInt: true
+        }
+    },
 }, {
     tableName: "lead",
     timestamps: true
@@ -76,5 +101,10 @@ const Lead = sequelize.define("Lead", {
 // Correct associations
 Assign.belongsTo(Lead, { foreignKey: "leadId", as: "lead", onDelete: "CASCADE", onUpdate: "CASCADE" });
 Lead.hasMany(Assign, { foreignKey: "leadId", as: "assigns", onDelete: "CASCADE", onUpdate: "CASCADE" });
+
+
+// Admin associations for assigned leads
+Lead.belongsTo(Admin, { foreignKey: "assignByUser", as: "assignBy" });
+Lead.belongsTo(Admin, { foreignKey: "assignedTo", as: "assignedUser" });
 
 module.exports = Lead;

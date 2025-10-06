@@ -34,7 +34,7 @@ const getPayments = require("../controller/payment/get-payment");
 const deletePayment = require("../controller/payment/delete-payment");
 const markPaymentPaid = require("../controller/payment/mark-payment-paid");
 const getPaymentList = require("../controller/payment/get-payment-list");
-const createAssign = require("../controller/assign/lead-assign");
+
 const getAssignList = require("../controller/assign/lead-assign-list");
 const updateAssign = require("../controller/assign/update-lead-assign");
 const deleteAssign = require("../controller/assign/delete-lead-assign");
@@ -54,6 +54,9 @@ const DeleteNotification = require("../controller/notification/delete-notificati
 const getAllNotification = require("../controller/notification/get-all-notification");
 const leadAddedNotification = require("../controller/notification/add-lead-notification");
 const getNotificationById = require("../controller/notification/get-notificaction-by-id");
+const assignLead = require("../controller/assign/lead-assign");
+const getTotalLeadsCount = require("../controller/lead/get-status-wise-lead-list");
+
 
 
 
@@ -77,6 +80,8 @@ adminRouter.post("/update-user", authenticateAdminJwt, updateUser);
 adminRouter.post("/delete-user", authenticateAdminJwt, deleteUser);
 adminRouter.post("/get-user-by-id", authenticateAdminJwt, getUserById);
 adminRouter.post("/toggle-status", authenticateAdminJwt, toggleUserStatus);
+
+
 //lead routes
 
 adminRouter.post("/create-lead", authenticateAdminJwt, createLead);
@@ -84,10 +89,11 @@ adminRouter.post("/update-lead", authenticateAdminJwt, updateLead);
 adminRouter.post("/delete-lead", authenticateAdminJwt, deleteLead);
 adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
+adminRouter.get("/get-status-wise-lead-list", authenticateAdminJwt, getTotalLeadsCount);
 
 // assign routes
 adminRouter.post("/lead-assign-list", authenticateAdminJwt, getAssignList);
-adminRouter.post("/lead-assign", authenticateAdminJwt, createAssign);
+adminRouter.post("/lead-assign", authenticateAdminJwt, assignLead);
 adminRouter.post("/update-lead-assign", authenticateAdminJwt, updateAssign);
 adminRouter.post("/delete-lead-assign", authenticateAdminJwt, deleteAssign);
 

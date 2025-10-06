@@ -1,56 +1,55 @@
-const adminService = require("../../services/admin.service");
-const assignService = require("../../services/assign.service");
-const leadListService = require("../../services/lead.service");
+const Lead = require("../../models/lead.model");
+const Admin = require("../../models/admin.model");
 
-const createAssign = async (request, response) => {
+const assignLead = async (req, res) => {
     try {
-        const { id } = request;
+        const { leadId, assignTo, assignByUser } = req.body;
 
-        const { leadId, assignTo } = request.body;
-
-
-
-        const isLeadExist = await leadListService.getLeadById(leadId)
-        if (isLeadExist) {
-            return response.status(200).json({
+        // Lead check
+        const lead = await Lead.findByPk(leadId);
+        if (!lead) {
+            return res.status(404).json({
                 status: "FAILED",
-                message: "Lead does not exist"
-            })
-        }
-
-        const isAdminExist = await adminService.getAdminById(assignTo)
-        if (isAdminExist) {
-            return response.status(200).json({
-                status: "FAILED",
-                message: "Selected assign to user does not exist"
-            })
-        }
-
-        const dataToInsert = {
-            leadId: isLeadExist?.id ?? leadId,
-            assignTo: isAdminExist?.id ?? assignTo,
-            assignByUser: id,
-        };
-
-        const result = await assignService.createAssign(dataToInsert);
-
-        if (result) {
-            return response.status(200).json({
-                status: "SUCCESS",
-                message: "Lead assigned successfully",
-            });
-        } else {
-            return response.status(200).json({
-                status: "FAILED",
-                message: "Failed to assign lead successfully, Please try again",
+                message: "Lead not found"
             });
         }
+
+        // AssignTo user check
+        const userToAssign = await Admin.findByPk(assignTo);
+        if (!userToAssign) {
+            return res.status(404).json({
+                status: "FAILED",
+                message: "Assigned user not found"
+            });
+        }
+
+        // AssignBy user check
+        const userAssignBy = await Admin.findByPk(assignByUser);
+        if (!userAssignBy) {
+            return res.status(404).json({
+                status: "FAILED",
+                message: "Assign by user not found"
+            });
+        }
+
+        // Update Lead
+        lead.assignedTo = assignTo;
+        lead.assignByUser = assignByUser;
+        lead.isAssigned = true;
+        await lead.save();
+
+        return res.status(200).json({
+            status: "SUCCESS",
+            message: "Lead assigned successfully",
+            data: lead
+        });
     } catch (error) {
-        return response.status(500).json({
+        return res.status(500).json({
             status: "FAILED",
-            message: error.message
+            message: "Error assigning lead",
+            error: error.message
         });
     }
 };
 
-module.exports = createAssign;
+module.exports = assignLead;

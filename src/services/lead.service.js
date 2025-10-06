@@ -79,8 +79,66 @@ const leadService = {
         return await Lead.findOne({
             where: { id: leadId }
         });
-    }
+    },
 
+    getLeadsWithStats: async ({ page = 1, limit = 10, search = "", statusFilter = "" }) => {
+        const offset = (page - 1) * limit;
+
+        // 🔹 Base search filter
+        const whereCondition = {
+            [Op.and]: [
+                {
+                    [Op.or]: [
+                        { projectName: { [Op.iLike]: `%${search}%` } },
+                        { name: { [Op.iLike]: `%${search}%` } },
+                        { company: { [Op.iLike]: `%${search}%` } },
+                        { status: { [Op.iLike]: `%${search}%` } },
+                    ],
+                },
+            ],
+        };
+
+        // 🔹 Add status filter when user clicks "Approved / Rejected / Pending"
+        if (statusFilter) {
+            whereCondition[Op.and].push({
+                status: { [Op.iLike]: statusFilter }, // case-insensitive match
+            });
+        }
+
+        // 🔹 Counts (case-insensitive)
+        const [approved, rejected, pending, totalLeads] = await Promise.all([
+            Lead.count({ where: { status: { [Op.iLike]: "approved" } } }),
+            Lead.count({ where: { status: { [Op.iLike]: "rejected" } } }),
+            Lead.count({ where: { status: { [Op.iLike]: "pending" } } }),
+            Lead.count({ where: whereCondition }),
+        ]);
+
+        // 🔹 Lead list with pagination
+        const leads = await Lead.findAll({
+            where: whereCondition,
+            attributes: [
+                "id",
+                "projectName",
+                "date",
+                "startDate",
+                "endDate",
+                "status",
+            ],
+            order: [["createdAt", "DESC"]],
+            offset,
+            limit,
+        });
+
+        return {
+            totalLeads,
+            approved,
+            rejected,
+            pending,
+            page,
+            limit,
+            leads,
+        };
+    },
 };
 
 module.exports = leadService
