@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/db");
 
-const Admin = sequelize.define(
-    "Admin",
+const User = sequelize.define(
+    "User",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -23,10 +23,7 @@ const Admin = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
+
         role: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -40,9 +37,9 @@ const Admin = sequelize.define(
 
     },
     {
-        tableName: "admins",
+        tableName: "use",
         timestamps: true,
     }
 );
 
-module.exports = Admin;
+module.exports = User;

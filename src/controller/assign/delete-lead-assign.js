@@ -1,38 +1,46 @@
-const assignService = require("../../services/assign.service");
+const Lead = require("../../models/lead.model");
 
-const deleteAssign = async (req, res) => {
+const deleteAssignLead = async (req, res) => {
     try {
-        const { assignId } = req.params;
+        const { leadId } = req.body;
 
-        // ===== Check assign exist =====
-        const existingAssign = await assignService.getAssignById(assignId);
-        if (!existingAssign) {
+        // Check if lead exists
+        const lead = await Lead.findByPk(leadId);
+        if (!lead) {
             return res.status(404).json({
                 status: "FAILED",
-                message: "Assignment not found"
+                message: "Lead not found"
             });
         }
 
-        // ===== Delete record =====
-        const deleted = await assignService.deleteAssign(assignId);
-
-        if (deleted) {
-            return res.status(200).json({
-                status: "SUCCESS",
-                message: "Assignment deleted successfully"
+        // If lead is not assigned
+        if (!lead.isAssigned) {
+            return res.status(400).json({
+                status: "FAILED",
+                message: "Lead is not assigned to anyone"
             });
         }
+
+        //  Unassign lead
+        lead.assignedTo = null;
+        lead.assignByUser = null;
+        lead.isAssigned = false;
+
+        await lead.save();
 
         return res.status(200).json({
-            status: "FAILED",
-            message: "Failed to delete assignment"
+            status: "SUCCESS",
+            message: "Assign Lead deleted successfully"
+            // data: lead
         });
+
     } catch (error) {
         return res.status(500).json({
             status: "FAILED",
-            message: error.message
+            message: "Error unassigning lead",
+            error: error.message
         });
     }
 };
 
-module.exports = deleteAssign;
+module.exports = deleteAssignLead;

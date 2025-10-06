@@ -40,81 +40,65 @@ const FollowUp = sequelize.define(
         },
 
         status: {
-            type: DataTypes.ENUM("Scheduled", "Done", "Pending", "Cancelled", "Rejected", "Approved"),
+            type: DataTypes.ENUM("Pending", "Rejected", "Approved"),
             defaultValue: "Scheduled",
         },
 
-        notes: {
-            type: DataTypes.TEXT,
-            allowNull: true,
-        },
+        // notes: {
+        //     type: DataTypes.TEXT,
+        //     allowNull: true,
+        // },
 
         nextFollowUpDate: {
             type: DataTypes.DATE,
             allowNull: true,
         },
 
-        approvedBy: {
-            type: DataTypes.INTEGER, // userId  approver
-            allowNull: true,
-        },
+        // approvedBy: {
+        //     type: DataTypes.INTEGER, // userId  approver
+        //     allowNull: true,
+        // },
 
-        rejectedBy: {
-            type: DataTypes.INTEGER, // userId of who rejected
-            allowNull: true,
-        },
+        // rejectedBy: {
+        //     type: DataTypes.INTEGER, // userId of who rejected
+        //     allowNull: true,
+        // },
 
-        doneBy: {
-            type: DataTypes.INTEGER, //  follow-up complete 
-            allowNull: true,
-        },
+        // doneBy: {
+        //     type: DataTypes.INTEGER, //  follow-up complete 
+        //     allowNull: true,
+        // },
 
         rejectionReason: {
             type: DataTypes.TEXT,
             allowNull: true,
         },
 
-        notifyAdmin: {
-            type: DataTypes.BOOLEAN,    // Notify Admin 
-            defaultValue: false,
-        },
+        // notifyAdmin: {
+        //     type: DataTypes.BOOLEAN,    // Notify Admin 
+        //     defaultValue: false,
+        // },
 
-        assignedTo: {
-            type: DataTypes.INTEGER,   // Assigned to user (salesLead / Team lead ..)
-            allowNull: true, // userId
-        },
+        // assignedTo: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true, // userId
+        // },
 
         whatsappNumber: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-
-        priority: {
-            type: DataTypes.ENUM("Low", "Medium", "High"),
-            defaultValue: "Medium",
-        },
-        outcome: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         //  user ka response
-        response: {
-            type: DataTypes.ENUM(
-                "Positive",
-                "Negative",
-                "Pending",
-                "Interested but negotiating"
-            ),
-            allowNull: true,
-        },
-        location: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        duration: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
+        // response: {
+        //     type: DataTypes.ENUM(
+        //         "Positive",
+        //         "Negative",
+        //         "Pending",
+        //         "Interested but negotiating"
+        //     ),
+        //     allowNull: true,
+        // },
+
 
         isActive: {
             type: DataTypes.BOOLEAN,
@@ -126,10 +110,10 @@ const FollowUp = sequelize.define(
             allowNull: false,
         },
 
-        updatedBy: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
+        // updatedBy: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true,
+        // },
 
     },
     {

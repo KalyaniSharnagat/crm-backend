@@ -1,3 +1,4 @@
+const Admin = require("../models/admin.model");
 const Assign = require("../models/assign.model");
 const Lead = require("../models/lead.model");
 const { Op } = require("sequelize");
@@ -10,52 +11,37 @@ const assignService = {
         return assign;
     },
 
-    getAssignList: async ({ assignedTo, leadId, search, page = 1, limit = 10 }) => {
+    getAssignedLeadlist: async ({ page = 1, limit = 10, search = "" }) => {
+        page = parseInt(page);
+        limit = parseInt(limit);
         const offset = (page - 1) * limit;
 
-        // Filters
-        const where = {};
-        if (assignedTo) where.assignedTo = assignedTo;
-        if (leadId) where.leadId = leadId;
+        const searchCondition = search
+            ? {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { email: { [Op.like]: `%${search}%` } },
+                    { company: { [Op.like]: `%${search}%` } },
+                    { "$assignBy.username$": { [Op.like]: `%${search}%` } },
+                    { "$assignedUser.username$": { [Op.like]: `%${search}%` } },
+                ],
+            }
+            : {};
 
-        // Search filter
-        const leadWhere = {};
-        if (search) {
-            const { Op } = require("sequelize");
-            leadWhere[Op.or] = [
-                { name: { [Op.iLike]: `%${search}%` } },
-                { email: { [Op.iLike]: `%${search}%` } },
-                { mobile: { [Op.iLike]: `%${search}%` } },
-            ];
-        }
-
-        const { rows, count } = await Assign.findAndCountAll({
-            where,
+        const { rows, count } = await Lead.findAndCountAll({
+            where: { isAssigned: true, ...searchCondition },
             include: [
-                {
-                    model: require("../models/lead.model"),
-                    as: "lead",
-                    where: Object.keys(leadWhere).length ? leadWhere : undefined,
-                    required: search ? true : false,
-                }
+                { model: Admin, as: "assignBy", attributes: ["id", "username", "email"] },
+                { model: Admin, as: "assignedUser", attributes: ["id", "username", "email"] }
             ],
-            limit,
             offset,
+            limit,
+            distinct: true,
             order: [["createdAt", "DESC"]],
         });
 
-        return {
-            data: rows,
-            pagination: {
-                total: count,
-                page,
-                limit,
-                totalPages: Math.ceil(count / limit),
-            },
-        };
+        return { leads: rows, count, page, limit };
     },
-
-
 
     getAssignById: async (id) => {
         return await Assign.findByPk(id);

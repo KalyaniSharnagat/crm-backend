@@ -27,7 +27,7 @@ exports.adminIdValidationSchema = Joi.object({
 exports.createUserValidationSchema = Joi.object({
     username: Joi.string().min(2).max(100).required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).required(),
+    // password: Joi.string().min(6).required(),
     mobile: Joi.string().pattern(/^[0-9]{10}$/).optional().allow(null, ""),
     role: Joi.string().valid("Manager", "Sales Team", "Team Leader", "Director", "Tech Head", "CEO", "Sales Head", "HR", "Admin").optional(),
     status: Joi.string().valid("enable", "disable").optional(),
@@ -38,7 +38,7 @@ exports.updateUserValidationSchema = Joi.object({
     username: Joi.string().min(2).max(100).optional(),
     email: Joi.string().email().optional(),
     mobile: Joi.string().pattern(/^[0-9]{10}$/).optional().allow(null, ""),
-    role: Joi.string().valid("User", "Manager", "Director").optional(),
+    role: Joi.string().valid("Admin", "Manager", "Sales Team", "Team Leader", "Director", "Tech Head", "CEO", "Sales Head", "HR").optional(),
     status: Joi.string().valid("enable", "disable").optional(),
     password: Joi.string().min(6).optional(),
 });
@@ -50,15 +50,15 @@ exports.createLeadValidationSchema = Joi.object({
     email: Joi.string().email().optional().allow(null, ""),
     mobile: Joi.string().optional().allow(null, ""),
     company: Joi.string().optional().allow(null, ""),
-    status: Joi.string().valid("New", "Contacted", "Positive", "Lost").default("New"),
+    status: Joi.string().valid("Approved", "Rejected", "Pending").default("Approved"),
     assignedTo: Joi.string().optional().allow(null, ""),
     leadSource: Joi.string().valid("Website", "Referral", "Cold Call", "Other").default("Other"),
     notes: Joi.string().optional().allow(null, ""),
     projectName: Joi.string().optional().allow(null, ""),
-    interestPercentage: Joi.alternatives().try(
-        Joi.number().integer().min(0).max(100),
-        Joi.string().pattern(/^([0-9]{1,2}|100)%$/)
-    ).optional().allow(null, "")
+    startDate: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()).required().messages({ "any.required": "Follow-up date is required", "date.format": "Follow-up date must be in ISO format", }),
+    endDate: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()).optional().allow(null, ""),
+    date: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()).optional().allow(null, ""),
+    interestPercentage: Joi.alternatives().try(Joi.number().integer().min(0).max(100), Joi.string().pattern(/^([0-9]{1,2}|100)%$/)).optional().allow(null, "")
 });
 
 
@@ -68,26 +68,13 @@ exports.leadIdValidationSchema = Joi.object({
 
 //?==================== assign =======================
 exports.createAssignValidationSchema = Joi.object({
-    leadId: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-            "any.required": "Lead ID is required",
-            "number.base": "Lead ID must be a number",
-            "number.integer": "Lead ID must be an integer",
-            "number.positive": "Lead ID must be positive",
-        }),
-    assignTo: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-            "any.required": "AssignTo user ID is required",
-            "number.base": "AssignTo must be a number",
-            "number.integer": "AssignTo must be an integer",
-            "number.positive": "AssignTo must be positive",
-        })
+    leadId: Joi.number().integer().positive().required().messages({
+        "any.required": "Lead ID is required",
+        "number.base": "Lead ID must be a number",
+        "number.integer": "Lead ID must be an integer",
+        "number.positive": "Lead ID must be positive",
+    }),
+    assignTo: Joi.number().integer().positive().required().messages({ "any.required": "AssignTo user ID is required", "number.base": "AssignTo must be a number", "number.integer": "AssignTo must be an integer", "number.positive": "AssignTo must be positive", })
 });
 
 //?======================  work ======================
@@ -144,14 +131,7 @@ exports.updateQuotationValidationSchema = Joi.object({
     clientCompany: Joi.string().max(100).allow("").optional(),
     validUntil: Joi.date().greater('now').optional(),
     amount: Joi.number().positive().optional(),
-    items: Joi.array().items(
-        Joi.object({
-            itemName: Joi.string().min(3).max(100).optional(),
-            description: Joi.string().min(3).max(200).optional(),
-            quantity: Joi.number().integer().positive().optional(),
-            price: Joi.number().positive().optional(),
-        })
-    ).min(1).optional(),
+    items: Joi.array().items(Joi.object({ itemName: Joi.string().min(3).max(100).optional(), description: Joi.string().min(3).max(200).optional(), quantity: Joi.number().integer().positive().optional(), price: Joi.number().positive().optional(), })).min(1).optional(),
     status: Joi.string().valid('Draft', 'Sent', 'Accepted', 'Declined').optional(),
 });
 
@@ -161,8 +141,9 @@ exports.createFollowUpValidationSchema = Joi.object({
     leadId: Joi.number().required().messages({ "any.required": "Lead ID is required", }),
     followUpDate: Joi.date().required().messages({ "any.required": "Follow-up date is required", }),
     mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").required().messages({ "any.only": "Invalid follow-up mode", "any.required": "Follow-up mode is required", }),
-    assignedTo: Joi.number().allow(null),
-    createdBy: Joi.number().required().messages({ "any.required": "Created By is required", }),
+    status: Joi.string().valid("Approved", "Rejected", "Pending").default("Pending"),
+    rejectionReason: Joi.when("status", { is: "Rejected", then: Joi.string().trim().required().messages({ "any.required": "Reason is required when status is Rejected", "string.empty": "Reason cannot be empty when status is Rejected", }), otherwise: Joi.string().optional().allow(null, ""), }),
+    createdBy: Joi.number().optional(),
 });
 
 //?================update follow up =====================
@@ -173,7 +154,7 @@ exports.updateFollowUpValidationSchema = Joi.object({
     nextFollowUpDate: Joi.date().optional().messages({ "date.base": "Next follow-up date must be a valid date" }),
     mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").optional().messages({ "string.base": "Mode must be a text", "any.only": "Mode must be one of Call, Email, Meeting, Message, WhatsApp, Other" }),
     notes: Joi.string().allow("", null).optional().messages({ "string.base": "Notes must be text" }),
-    status: Joi.string().valid("Scheduled", "Done", "Pending", "Cancelled", "Approved", "Rejected").optional().messages({ "any.only": "Status must be one of Scheduled, Done, Pending, Cancelled, Approved, Rejected" }),
+    status: Joi.string().valid("Approved", "Rejected", "Pending").default("Approved"),
     responseText: Joi.string().allow("", null).optional().messages({ "string.base": "Response must be text" }),
     assignedTo: Joi.number().integer().optional().messages({ "number.base": "AssignedTo must be a user id (number)" }),
     projectName: Joi.string().allow(null, ""),
@@ -191,7 +172,7 @@ exports.approveFollowUpValidationSchema = Joi.object({
 exports.createPaymentValidationSchema = Joi.object({
     projectName: Joi.string().required(),
     clientName: Joi.string().required(),
-    paymentId: Joi.string().required(),
+    paymentId: Joi.string(),
     installmentNo: Joi.number().integer().min(1).required(),
     dueDate: Joi.date().required(),
     amount: Joi.number().positive().required(),
@@ -238,3 +219,16 @@ exports.markAsReadValidationSchema = Joi.object({
     id: Joi.number().integer().required()
 });
 
+//?================== assignlead ===========================
+exports.updateLeadAssignValidationSchema = Joi.object({
+    leadId: Joi.number().integer().required().messages({
+        "any.required": "leadId is required",
+        "number.base": "leadId must be a number"
+    }),
+    assignTo: Joi.number().integer().optional().messages({
+        "number.base": "assignTo must be a number"
+    }),
+    assignByUser: Joi.number().integer().optional().messages({
+        "number.base": "assignByUser must be a number"
+    })
+});

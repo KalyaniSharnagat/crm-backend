@@ -1,70 +1,72 @@
-const adminService = require("../../services/admin.service");
-const assignService = require("../../services/assign.service");
-const leadListService = require("../../services/lead.service");
+const Lead = require("../../models/lead.model");
+const Admin = require("../../models/admin.model");
+const { updateLeadAssignValidationSchema } = require("../../utils/validation/admin.validation");
 
-const updateAssign = async (reqest, response) => {
+const updateLeadAssign = async (req, res) => {
     try {
-        const { id: assignByUser } = reqest; // logged-in admin
-        const { assignId } = reqest.params;  // assign id from URL
-        const { leadId, assignTo } = reqest.body;
+        const { leadId, assignTo, assignByUser } = req.body;
 
-        // ===== Check assign exist =====
-        const existingAssign = await assignService.getAssignById(assignId);
-        if (!existingAssign) {
-            return response.status(404).json({
+        // ✅ Validate request body
+        const { error } = updateLeadAssignValidationSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({
                 status: "FAILED",
-                message: "Assignment not found"
+                message: error.details[0].message
             });
         }
 
-        // ===== Check lead exist =====
-        if (leadId) {
-            const lead = await leadListService.getLeadById(leadId);
-            if (!lead) {
-                return response.status(404).json({
-                    status: "FAILED",
-                    message: "Lead does not exist"
-                });
-            }
+        // ✅ Lead check
+        const lead = await Lead.findByPk(leadId);
+        if (!lead) {
+            return res.status(404).json({
+                status: "FAILED",
+                message: "Lead not found"
+            });
         }
 
-        // ===== Check admin exist =====
+        // ✅ AssignTo user check
         if (assignTo) {
-            const admin = await adminService.getAdminById(assignTo);
-            if (!admin) {
-                return response.status(404).json({
+            const userToAssign = await Admin.findByPk(assignTo);
+            if (!userToAssign) {
+                return res.status(404).json({
                     status: "FAILED",
-                    message: "Selected assign-to user does not exist"
+                    message: "Assigned user not found"
                 });
             }
+            lead.assignedTo = assignTo;
         }
 
-        // ===== Update record =====
-        const dataToUpdate = {
-            leadId: leadId ?? existingAssign.leadId,
-            assignTo: assignTo ?? existingAssign.assignTo,
-            assignByUser
-        };
-
-        const updated = await assignService.updateAssign(assignId, dataToUpdate);
-
-        if (updated) {
-            return response.status(200).json({
-                status: "SUCCESS",
-                message: "Assignment updated successfully"
-            });
+        // ✅ AssignBy user check
+        if (assignByUser) {
+            const userAssignBy = await Admin.findByPk(assignByUser);
+            if (!userAssignBy) {
+                return res.status(404).json({
+                    status: "FAILED",
+                    message: "Assign by user not found"
+                });
+            }
+            lead.assignByUser = assignByUser;
         }
 
-        return response.status(200).json({
-            status: "FAILED",
-            message: "Failed to update assignment"
+        // ✅ Mark lead as assigned
+        if (assignTo) {
+            lead.isAssigned = true;
+        }
+
+        await lead.save();
+
+        return res.status(200).json({
+            status: "SUCCESS",
+            message: "Lead assignment updated successfully",
+            data: lead
         });
     } catch (error) {
-        return response.status(500).json({
+        return res.status(500).json({
             status: "FAILED",
-            message: error.message
+            message: "Error updating lead assignment",
+            error: error.message
         });
     }
 };
 
-module.exports = updateAssign;
+module.exports = updateLeadAssign;

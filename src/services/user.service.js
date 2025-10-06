@@ -1,14 +1,14 @@
 
-const Admin = require("../models/admin.model");
+const User = require("../models/user.model");
 const { Op } = require("sequelize");
 
 const userService = {
     createUser: async (dataToInsert) => {
-        return await Admin.create(dataToInsert);
+        return await User.create(dataToInsert);
     },
 
     getUserByEmail: async (email) => {
-        return await Admin.findOne({ where: { email } });
+        return await User.findOne({ where: { email } });
     },
 
     getUserList: async ({ offset, limit, search, role, status }) => {
@@ -26,7 +26,7 @@ const userService = {
 
         if (status) whereCondition.status = status === "enable";
 
-        return await Admin.findAndCountAll({
+        return await User.findAndCountAll({
             where: whereCondition,
             offset,
             limit,
@@ -34,13 +34,19 @@ const userService = {
         });
     },
     updateUser: async (id, dataToUpdate) => {
-        return await Admin.update(dataToUpdate, { where: { id } });
+        // update
+        await User.update(dataToUpdate, { where: { id } });
+
+        // fetch updated user
+        const updatedUser = await User.findOne({ where: { id } });
+
+        return updatedUser;
     },
     getUserById: async (id) => {
-        return await Admin.findByPk(id);
+        return await User.findByPk(id);
     },
     deleteUser: async (id) => {
-        return await Admin.destroy({ where: { id } });
+        return await User.destroy({ where: { id } });
     },
 };
 
