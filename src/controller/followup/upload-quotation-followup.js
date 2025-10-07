@@ -1,31 +1,28 @@
-const quotationServices = require("../../services/quotation.service");
+const multerUtils = require("../../utils/multer/multer.utils");
+const uploadCommon = require("../../utils/multer/common-upload").single("file");
+const runMiddleware = multerUtils.runMiddleware;
 
 const uploadQuotationFiles = async (req, res) => {
     try {
-        const file = req.file;
+        await runMiddleware(req, res, uploadCommon);
 
-        if (!file) {
-            return res.status(200).json({
+        const fileName = req.file?.filename;
+        if (!fileName) {
+            return res.status(400).json({
                 status: "FAILED",
-                message: "File is required.",
+                message: "No files uploaded"
             });
         }
 
-        // const result = await quotationServices.createQuotation({
-        //     filePath: `public/quotations/${file.filename}`,
-        //     originalName: file.originalname,
-        // });
-
         return res.status(200).json({
             status: "SUCCESS",
-            message: "File uploaded successfully.",
-            data: result,
+            message: "File uploaded successfully",
+            data: { file: [fileName] } // ✅ array of filenames
         });
+
     } catch (error) {
-        return res.status(500).json({
-            status: "FAILED",
-            message: error.message,
-        });
+        console.error(error);
+        return res.status(500).json({ status: "FAILED", message: error.message });
     }
 };
 
