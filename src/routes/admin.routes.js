@@ -63,6 +63,7 @@ const getTotalFollowUpCount = require("../controller/followup/get-total-follow-u
 const getFollowUpList = require("../controller/followup/get-follow-up-list");
 const uploadQuotationFiles = require("../controller/followup/upload-quotation-followup");
 const uploadCommon = require("../utils/multer/common-upload");
+const getallLeadList = require("../controller/lead/get-all-lead-list");
 
 
 
@@ -99,6 +100,7 @@ adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
 adminRouter.get("/get-status-wise-lead-list", authenticateAdminJwt, getTotalLeadsList);
 adminRouter.get("/get-lead-count", authenticateAdminJwt, getTotalleadsCount);
+adminRouter.get("/get-all-lead-list", authenticateAdminJwt, getallLeadList);
 
 // assign routes
 adminRouter.post("/lead-assign-list", authenticateAdminJwt, getAssignList);

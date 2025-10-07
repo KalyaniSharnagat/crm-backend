@@ -73,7 +73,11 @@ const leadService = {
         });
     },
 
-
+    getAllLeads: async () => {
+        return await Lead.findAll({
+            order: [["createdAt", "DESC"]], // optional sorting
+        });
+    },
 
     getLeadById: async (leadId) => {
         return await Lead.findOne({
