@@ -41,7 +41,7 @@ const assignLead = async (req, res) => {
         return res.status(200).json({
             status: "SUCCESS",
             message: "Lead assigned successfully",
-            data: lead
+            // data: lead
         });
     } catch (error) {
         return res.status(500).json({
