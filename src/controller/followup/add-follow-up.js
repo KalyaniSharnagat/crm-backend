@@ -4,18 +4,11 @@ const { createFollowUpValidationSchema } = require("../../utils/validation/admin
 
 const addFollowUp = async (request, response) => {
     try {
-        const { leadId, followUpDate, nextFollowUpDate, mode, followUpByName, status, callNumber, whatsappNumber, rejectionReason, createdBy: bodyCreatedBy } = request.body;
+        const { leadId, followUpDate, nextFollowUpDate, mode, followUpByName, status, callNumber } = request.body;
 
-        const createdBy = request.user?.id || bodyCreatedBy;
-        if (!createdBy) {
-            return response.status(400).json({
-                status: "FAILED",
-                message: "Created By is required",
-            });
-        }
 
         const validationResult = await createFollowUpValidationSchema.validate(
-            { leadId, followUpDate, mode, createdBy, status, rejectionReason },
+            { leadId, followUpDate, mode, status },
             { abortEarly: true }
         );
 
@@ -24,6 +17,20 @@ const addFollowUp = async (request, response) => {
                 status: "FAILED",
                 message: validationResult.error.details[0].message,
             });
+        }
+
+        if (nextFollowUpDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const nextDate = new Date(nextFollowUpDate);
+            nextDate.setHours(0, 0, 0, 0);
+
+            if (nextDate <= today) {
+                return response.status(400).json({
+                    status: "FAILED",
+                    message: "Next follow-up date must be a future date",
+                });
+            }
         }
 
         const lead = await leadService.getLeadById(leadId);
@@ -41,19 +48,10 @@ const addFollowUp = async (request, response) => {
                 message: "Follow-up already exists for this Lead on the same date",
             });
         }
+
         // Validate status
         const allowedStatus = ["Approved", "Rejected", "Pending"];
         const finalStatus = status && allowedStatus.includes(status) ? status : "Pending";
-
-        if (finalStatus === "Rejected") {
-            const trimmedReason = rejectionReason ? rejectionReason.toString().trim() : "";
-            if (!trimmedReason) {
-                return response.status(400).json({
-                    status: "FAILED",
-                    message: "rejectionReason is required when status is Rejected",
-                });
-            }
-        }
 
         const dataToInsert = {
             leadId,
@@ -64,10 +62,7 @@ const addFollowUp = async (request, response) => {
             nextFollowUpDate,
             mode,
             callNumber,
-            whatsappNumber,
-            status: finalStatus,
-            rejectionReason: rejectionReason || null,
-            createdBy,
+            status: finalStatus
         };
 
         const result = await followUpService.createFollowUp(dataToInsert);

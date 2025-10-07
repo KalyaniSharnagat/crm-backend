@@ -54,10 +54,15 @@ const DeleteNotification = require("../controller/notification/delete-notificati
 const getAllNotification = require("../controller/notification/get-all-notification");
 const leadAddedNotification = require("../controller/notification/add-lead-notification");
 const assignLead = require("../controller/assign/lead-assign");
-const getTotalLeadsCount = require("../controller/lead/get-status-wise-lead-list");
+const getTotalLeadsList = require("../controller/lead/get-status-wise-lead-list");
 const getClientWiseFollowUpList = require("../controller/followup/get-client-wise-follow-up-list");
 const getUserAssignList = require("../controller/user/get-user-assign-list");
 const getNotificationById = require("../controller/notification/get-notification-by-id");
+const getTotalleadsCount = require("../controller/lead/total-lead-count");
+const getTotalFollowUpCount = require("../controller/followup/get-total-follow-up");
+const getFollowUpList = require("../controller/followup/get-follow-up-list");
+const uploadQuotationFiles = require("../controller/followup/upload-quotation-followup");
+const uploadCommon = require("../utils/multer/common-upload");
 
 
 
@@ -92,7 +97,8 @@ adminRouter.post("/update-lead", authenticateAdminJwt, updateLead);
 adminRouter.post("/delete-lead", authenticateAdminJwt, deleteLead);
 adminRouter.post("/get-lead-list", authenticateAdminJwt, getLeadList);
 adminRouter.post("/get-lead-by-id", authenticateAdminJwt, getLeadById);
-adminRouter.get("/get-status-wise-lead-list", authenticateAdminJwt, getTotalLeadsCount);
+adminRouter.get("/get-status-wise-lead-list", authenticateAdminJwt, getTotalLeadsList);
+adminRouter.get("/get-lead-count", authenticateAdminJwt, getTotalleadsCount);
 
 // assign routes
 adminRouter.post("/lead-assign-list", authenticateAdminJwt, getAssignList);
@@ -122,7 +128,9 @@ adminRouter.post("/update-follow-up", authenticateAdminJwt, updateFollowUp);
 adminRouter.post("/approve-follow-up", authenticateAdminJwt, approveFollowUp);
 adminRouter.post("/reject-follow-up", authenticateAdminJwt, rejectFollowUp);
 adminRouter.get("/get-client-wise-follow-up-list", authenticateAdminJwt, getClientWiseFollowUpList);
-
+adminRouter.get("/get-total-follow-up", authenticateAdminJwt, getTotalFollowUpCount);
+adminRouter.get("/get-follow-up-list", authenticateAdminJwt, getFollowUpList);
+adminRouter.post("/upload-quotation-followup", authenticateAdminJwt, uploadCommon.single("file"), uploadQuotationFiles);
 
 // log-generation route
 adminRouter.post("/create-log-generation", authenticateAdminJwt, createGenerationLog);

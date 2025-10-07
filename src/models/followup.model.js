@@ -108,7 +108,12 @@ const FollowUp = sequelize.define(
 
         createdBy: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
+        },
+
+        quotations: {
+            type: DataTypes.ARRAY(DataTypes.STRING), // store uploaded file names
+            defaultValue: [],
         },
 
         // updatedBy: {

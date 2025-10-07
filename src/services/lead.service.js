@@ -139,6 +139,16 @@ const leadService = {
             leads,
         };
     },
+
+    getTotalLeadsCount: async () => {
+        try {
+            const total = await Lead.count();
+            return total;
+        } catch (error) {
+            console.error("Error in getTotalLeadsCount service:", error);
+            throw error;
+        }
+    },
 };
 
 module.exports = leadService

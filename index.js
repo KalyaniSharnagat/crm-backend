@@ -22,6 +22,7 @@ const io = new Server(server, {
     }
 });
 
+
 const publicPath = path.join(__dirname, "public");
 
 // Check if folder exists, if not create it

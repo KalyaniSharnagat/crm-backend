@@ -142,8 +142,8 @@ exports.createFollowUpValidationSchema = Joi.object({
     followUpDate: Joi.date().required().messages({ "any.required": "Follow-up date is required", }),
     mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").required().messages({ "any.only": "Invalid follow-up mode", "any.required": "Follow-up mode is required", }),
     status: Joi.string().valid("Approved", "Rejected", "Pending").default("Pending"),
-    rejectionReason: Joi.when("status", { is: "Rejected", then: Joi.string().trim().required().messages({ "any.required": "Reason is required when status is Rejected", "string.empty": "Reason cannot be empty when status is Rejected", }), otherwise: Joi.string().optional().allow(null, ""), }),
-    createdBy: Joi.number().optional(),
+    // rejectionReason: Joi.when("status", { is: "Rejected", then: Joi.string().trim().required().messages({ "any.required": "Reason is required when status is Rejected", "string.empty": "Reason cannot be empty when status is Rejected", }), otherwise: Joi.string().optional().allow(null, ""), }),
+    // createdBy: Joi.number().optional(),
 });
 
 //?================update follow up =====================
@@ -175,7 +175,7 @@ exports.createPaymentValidationSchema = Joi.object({
     paymentId: Joi.string(),
     installmentNo: Joi.number().integer().min(1),
     dueDate: Joi.date(),
-    amount: Joi.number().positive().required(),
+    amount: Joi.number().positive(),
     paymentMethod: Joi.string().valid("Cash", "Card", "UPI", "Bank Transfer", "Cheque").required(),
     installmentCount: Joi.number().integer().min(1),
     paidAmount: Joi.number().positive().required(),

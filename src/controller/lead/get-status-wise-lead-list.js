@@ -1,6 +1,6 @@
 const leadService = require("../../services/lead.service");
 
-const getTotalLeadsCount = async (req, res) => {
+const getTotalLeadsList = async (req, res) => {
     try {
         const { page, limit, search, status } = req.query;
 
@@ -26,4 +26,4 @@ const getTotalLeadsCount = async (req, res) => {
     }
 };
 
-module.exports = getTotalLeadsCount;
+module.exports = getTotalLeadsList;
