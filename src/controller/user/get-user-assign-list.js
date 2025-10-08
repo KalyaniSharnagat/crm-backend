@@ -14,8 +14,9 @@ const getUserAssignList = async (request, response) => {
         }
 
         const userList = users.map(user => ({
-            username: user.username,
-            mobile: user.mobile,
+            id: user?.id,
+            username: user?.username,
+            mobile: user?.mobile,
         }));
 
         return response.status(200).json({

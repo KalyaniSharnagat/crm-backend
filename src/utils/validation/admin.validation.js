@@ -55,7 +55,7 @@ exports.createLeadValidationSchema = Joi.object({
     leadSource: Joi.string().valid("Website", "Referral", "Cold Call", "Other").default("Other"),
     notes: Joi.string().optional().allow(null, ""),
     projectName: Joi.string().optional().allow(null, ""),
-    startDate: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()).required().messages({ "any.required": "Follow-up date is required", "date.format": "Follow-up date must be in ISO format", }),
+    startDate: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()),
     endDate: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()).optional().allow(null, ""),
     date: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()).optional().allow(null, ""),
     interestPercentage: Joi.alternatives().try(Joi.number().integer().min(0).max(100), Joi.string().pattern(/^([0-9]{1,2}|100)%$/)).optional().allow(null, "")
@@ -139,7 +139,7 @@ exports.updateQuotationValidationSchema = Joi.object({
 //?======================== ceate follow up =============================
 exports.createFollowUpValidationSchema = Joi.object({
     leadId: Joi.number().required().messages({ "any.required": "Lead ID is required", }),
-    followUpDate: Joi.date().required().messages({ "any.required": "Follow-up date is required", }),
+    followUpDate: Joi.date().messages(),
     mode: Joi.string().valid("Call", "Email", "Meeting", "Message", "WhatsApp", "Other").required().messages({ "any.only": "Invalid follow-up mode", "any.required": "Follow-up mode is required", }),
     status: Joi.string().valid("Approved", "Rejected", "Pending").default("Pending"),
     // rejectionReason: Joi.when("status", { is: "Rejected", then: Joi.string().trim().required().messages({ "any.required": "Reason is required when status is Rejected", "string.empty": "Reason cannot be empty when status is Rejected", }), otherwise: Joi.string().optional().allow(null, ""), }),
