@@ -13,16 +13,19 @@ const userService = {
     getUserList: async ({ offset, limit, search, role, status }) => {
         const whereCondition = {};
 
+        // 🔍 Search condition
         if (search) {
             whereCondition[Op.or] = [
-                { name: { [Op.iLike]: `%${search}%` } },
+                { username: { [Op.iLike]: `%${search}%` } },
                 { email: { [Op.iLike]: `%${search}%` } },
                 { mobile: { [Op.iLike]: `%${search}%` } },
             ];
         }
 
+        // 🎭 Role filter
         if (role) whereCondition.role = role;
 
+        // ⚙️ Status filter
         if (status) whereCondition.status = status === "enable";
 
         return await User.findAndCountAll({
@@ -32,6 +35,7 @@ const userService = {
             order: [["createdAt", "DESC"]],
         });
     },
+
     updateUser: async (id, dataToUpdate) => {
         // update
         await User.update(dataToUpdate, { where: { id } });

@@ -45,10 +45,10 @@ const FollowUp = sequelize.define(
             defaultValue: "Pending",
         },
 
-        // notes: {
-        //     type: DataTypes.TEXT,
-        //     allowNull: true,
-        // },
+        remark: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
 
         nextFollowUpDate: {
             type: DataTypes.DATE,

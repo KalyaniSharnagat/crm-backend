@@ -4,7 +4,7 @@ const { createFollowUpValidationSchema } = require("../../utils/validation/admin
 
 const addFollowUp = async (request, response) => {
     try {
-        const { leadId, followUpDate, nextFollowUpDate, mode, followUpByName, status, callNumber } = request.body;
+        const { leadId, nextFollowUpDate, mode, followUpByName, status, callNumber } = request.body;
 
 
         const validationResult = await createFollowUpValidationSchema.validate(
