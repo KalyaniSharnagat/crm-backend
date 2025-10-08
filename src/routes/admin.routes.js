@@ -64,6 +64,9 @@ const getFollowUpList = require("../controller/followup/get-follow-up-list");
 const uploadQuotationFiles = require("../controller/followup/upload-quotation-followup");
 const uploadCommon = require("../utils/multer/common-upload");
 const getallLeadList = require("../controller/lead/get-all-lead-list");
+const previewFile = require("../controller/followup/preview-uploaded-file");
+// const notificationlist = require("../controller/notification/get-notification-list");
+const getNotificationCount = require("../controller/notification/get-notification-count");
 
 
 
@@ -133,6 +136,7 @@ adminRouter.get("/get-client-wise-follow-up-list", authenticateAdminJwt, getClie
 adminRouter.get("/get-total-follow-up", authenticateAdminJwt, getTotalFollowUpCount);
 adminRouter.get("/get-follow-up-list", authenticateAdminJwt, getFollowUpList);
 adminRouter.post("/upload-quotation-followup", authenticateAdminJwt, uploadCommon.single("file"), uploadQuotationFiles);
+adminRouter.get("/preview-uploaded-file", authenticateAdminJwt, previewFile);
 
 // log-generation route
 adminRouter.post("/create-log-generation", authenticateAdminJwt, createGenerationLog);
@@ -155,6 +159,6 @@ adminRouter.post("/add-quotation-notification", authenticateAdminJwt, QuotationA
 adminRouter.post("/delete-notification", authenticateAdminJwt, DeleteNotification);
 adminRouter.get("/get-all-notification", authenticateAdminJwt, getAllNotification);
 adminRouter.post("/get-notification-by-id", authenticateAdminJwt, getNotificationById);
-
+adminRouter.get("/get-notification-count", authenticateAdminJwt, getNotificationCount);
 
 module.exports = adminRouter;
