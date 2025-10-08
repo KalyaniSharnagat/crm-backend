@@ -1,10 +1,12 @@
 // const { sequelize } = require("../db/db"); // agar transaction use karna ho
+const Lead = require('../models/lead.model');
 const Notification = require('../models/notification.model');
-
+const Quotation = require('../models/quotation.model');
+const sequelize = require('../db/db').sequelize;
 const notifications = [];
 const notificationService = {
 
-    // addNotification: async (data, transaction = null) => {
+    // addNotification: async (data, transaction = null) => { 
     //     try {
     //         return await Notification.create(data, { transaction });
     //     } catch (err) {
@@ -96,7 +98,42 @@ const notificationService = {
         }
     },
 
+    // getNotificationList: async ({ page = 1, limit = 10, search = "" }) => {
+    //     const offset = (page - 1) * limit;
 
+    //     // 🔍 Search condition
+    //     const whereCondition = search
+    //         ? {
+    //             [Op.or]: [
+    //                 { title: { [Op.iLike]: `%${search}%` } },
+    //                 { description: { [Op.iLike]: `%${search}%` } },
+    //             ],
+    //         }
+    //         : {};
+
+    //     // 🔢 Count total notifications
+    //     const totalCount = await Notification.count({ where: whereCondition });
+
+    //     // 📄 Fetch paginated notifications
+    //     const notifications = await Notification.findAll({
+    //         where: whereCondition,
+    //         order: [["created_at", "DESC"]],
+    //         offset,
+    //         limit,
+    //     });
+
+    //     return { notifications, totalCount };
+    // },
+
+    getNotificationCount: async () => {
+        const leadCount = await Lead.count();          // Leads ka total
+        const quotationCount = await Quotation.count(); // Quotations ka total
+
+        const totalCount = leadCount + quotationCount;  // Dono ka sum
+        console.log("🔍 Notification Count:", totalCount);
+
+        return totalCount;
+    },
 };
 
 module.exports = notificationService;

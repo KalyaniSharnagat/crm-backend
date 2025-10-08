@@ -17,7 +17,7 @@ const uploadQuotationFiles = async (req, res) => {
         return res.status(200).json({
             status: "SUCCESS",
             message: "File uploaded successfully",
-            data: { file: [fileName] } // ✅ array of filenames
+            data: { file: [fileName] }
         });
 
     } catch (error) {

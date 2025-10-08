@@ -1,6 +1,6 @@
 const leadServices = require("../../services/lead.service");
 
-const getLeadList = async (req, res) => {
+const getallLeadList = async (req, res) => {
     try {
         const leads = await leadServices.getAllLeads();
 
@@ -17,4 +17,4 @@ const getLeadList = async (req, res) => {
     }
 };
 
-module.exports = getLeadList;
+module.exports = getallLeadList;
