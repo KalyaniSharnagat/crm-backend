@@ -1,39 +1,44 @@
-const notificationService = require("../../services/notification.service");
+const notificationServices = require("../../services/notification.service");
 
-const notificationList = async (req, res) => {
+const getNotificationList = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search = "" } = req.query;
+        const leadId = req.leadId; // coming from auth middleware
+        const { searchString = "", page = 1, limit = 10 } = req.body; // defaults
 
-        const pageNumber = parseInt(page, 10);
-        const limitNumber = parseInt(limit, 10);
+        // Fetch notifications with search and pagination
+        const notificationData = await notificationServices.getNotification(leadId, searchString, page, limit);
 
-        const { notifications, totalCount } = await notificationService.getNotificationList({
-            page: pageNumber,
-            limit: limitNumber,
-            search,
-        });
+        // Mark all fetched notifications as seen
+        await notificationServices.markNotificationAsSeen(leadId);
 
-        res.status(200).json({
-            status: "SUCCESS",
-            message: "Notifications fetched successfully.",
-            data: {
-                notifications,
-                pagination: {
-                    page: pageNumber,
-                    limit: limitNumber,
-                    totalPages: Math.ceil(totalCount / limitNumber),
-                    totalCount,
-                },
-            },
+        // Get count of unseen notifications
+        const unseenCount = await notificationServices.getNotificationCount(leadId);
+
+        // Emit unseen count via socket
+        if (req.io) {
+            req.io.emit("notificationCount", { unseenCount });
+        }
+
+        // Return response
+        if (notificationData?.notifications?.length > 0) {
+            return res.status(200).json({
+                status: "SUCCESS",
+                message: "Notifications fetched successfully",
+                data: notificationData,
+                unseenCount,
+            });
+        }
+
+        return res.status(404).json({
+            status: "FAILED",
+            message: "No notifications available",
         });
     } catch (error) {
-        console.error("Error fetching notifications:", error);
-        res.status(500).json({
+        return res.status(500).json({
             status: "FAILED",
-            message: "Error fetching notifications",
-            error: error.message,
+            message: error.message,
         });
     }
 };
 
-module.exports = notificationList;
+module.exports = getNotificationList

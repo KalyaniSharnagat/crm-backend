@@ -3,6 +3,7 @@ const Lead = require('../models/lead.model');
 const Notification = require('../models/notification.model');
 const Quotation = require('../models/quotation.model');
 const sequelize = require('../db/db').sequelize;
+const { Op } = require("sequelize");
 const notifications = [];
 const notificationService = {
 
@@ -98,32 +99,6 @@ const notificationService = {
         }
     },
 
-    // getNotificationList: async ({ page = 1, limit = 10, search = "" }) => {
-    //     const offset = (page - 1) * limit;
-
-    //     // 🔍 Search condition
-    //     const whereCondition = search
-    //         ? {
-    //             [Op.or]: [
-    //                 { title: { [Op.iLike]: `%${search}%` } },
-    //                 { description: { [Op.iLike]: `%${search}%` } },
-    //             ],
-    //         }
-    //         : {};
-
-    //     // 🔢 Count total notifications
-    //     const totalCount = await Notification.count({ where: whereCondition });
-
-    //     // 📄 Fetch paginated notifications
-    //     const notifications = await Notification.findAll({
-    //         where: whereCondition,
-    //         order: [["created_at", "DESC"]],
-    //         offset,
-    //         limit,
-    //     });
-
-    //     return { notifications, totalCount };
-    // },
 
     getNotificationCount: async () => {
         const leadCount = await Lead.count();          // Leads ka total
@@ -134,6 +109,55 @@ const notificationService = {
 
         return totalCount;
     },
+
+    getNotification: async (leadId, searchString = "", page = 1, limit = 10) => {
+        const offset = (page - 1) * limit;
+
+        const whereClause = {
+            leadId,
+            ...(searchString && searchString.trim() !== ""
+                ? {
+                    [Op.or]: [
+                        { title: { [Op.iLike]: `%${searchString}%` } },
+                        { message: { [Op.iLike]: `%${searchString}%` } },
+                    ],
+                }
+                : {}),
+        };
+
+        const { rows: notifications, count: totalCount } = await Notification.findAndCountAll({
+            where: whereClause,
+            limit,
+            offset,
+            order: [["createdAt", "DESC"]],
+        });
+
+        const totalPages = Math.ceil(totalCount / limit);
+
+        return {
+            notifications,
+            totalCount,
+            totalPages,
+            currentPage: page,
+        };
+    },
+
+
+    markNotificationAsSeen: async (adminId) => {
+        await Notification.update(
+            { isSeen: true },
+            { where: { leadId, isSeen: false } }
+        );
+    },
+
+
+    getNotificationCount: async (adminId) => {
+        return await Notification.count({
+            where: { leadId, isSeen: false },
+        });
+    },
+
+
 };
 
 module.exports = notificationService;

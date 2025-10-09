@@ -17,6 +17,7 @@ const getQuotationList = require("../controller/quotation/getQuotationList");
 const updateQuotation = require("../controller/quotation/updateQuotation");
 
 
+
 const authenticateAdminJwt = require("../utils/middleware/authentication-admin-jwt");
 const updateWork = require("../controller/work/update-work");
 
@@ -64,9 +65,11 @@ const getFollowUpList = require("../controller/followup/get-follow-up-list");
 const uploadQuotationFiles = require("../controller/followup/upload-quotation-followup");
 const uploadCommon = require("../utils/multer/common-upload");
 const getallLeadList = require("../controller/lead/get-all-lead-list");
-const previewFile = require("../controller/followup/preview-uploaded-file");
+
 // const notificationlist = require("../controller/notification/get-notification-list");
 const getNotificationCount = require("../controller/notification/get-notification-count");
+const { uploadquotation } = require("../utils/multer/upload-quotation-file");
+const notificationList = require("../controller/notification/get-notification-list");
 
 
 
@@ -128,15 +131,15 @@ adminRouter.post("/update-work", authenticateAdminJwt, updateWork);
 
 
 // follow-up route
-adminRouter.post("/add-follow-up", authenticateAdminJwt, addFollowUp);
+adminRouter.post("/add-follow-up", authenticateAdminJwt, uploadquotation.single("file"), addFollowUp);
 adminRouter.post("/update-follow-up", authenticateAdminJwt, updateFollowUp);
 adminRouter.post("/approve-follow-up", authenticateAdminJwt, approveFollowUp);
 adminRouter.post("/reject-follow-up", authenticateAdminJwt, rejectFollowUp);
 adminRouter.get("/get-client-wise-follow-up-list", authenticateAdminJwt, getClientWiseFollowUpList);
 adminRouter.get("/get-total-follow-up", authenticateAdminJwt, getTotalFollowUpCount);
 adminRouter.get("/get-follow-up-list", authenticateAdminJwt, getFollowUpList);
-adminRouter.post("/upload-quotation-followup", authenticateAdminJwt, uploadCommon.single("file"), uploadQuotationFiles);
-adminRouter.get("/preview-uploaded-file", authenticateAdminJwt, previewFile);
+// adminRouter.post("/upload-quotation-followup", authenticateAdminJwt, uploadCommon.single("file"), uploadQuotationFiles);
+
 
 // log-generation route
 adminRouter.post("/create-log-generation", authenticateAdminJwt, createGenerationLog);
@@ -158,6 +161,7 @@ adminRouter.post("/approve-lead-notification", authenticateAdminJwt, ApproveLead
 adminRouter.post("/add-quotation-notification", authenticateAdminJwt, QuotationAddNotification);
 adminRouter.post("/delete-notification", authenticateAdminJwt, DeleteNotification);
 adminRouter.get("/get-all-notification", authenticateAdminJwt, getAllNotification);
+adminRouter.get("/get-notification-list", authenticateAdminJwt, notificationList);
 adminRouter.post("/get-notification-by-id", authenticateAdminJwt, getNotificationById);
 adminRouter.get("/get-notification-count", authenticateAdminJwt, getNotificationCount);
 

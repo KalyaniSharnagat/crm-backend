@@ -10,15 +10,15 @@ const FollowUp = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
-        projectName: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        // projectName: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // },
 
-        clientName: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        // clientName: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // },
 
         followUpByName: {
             type: DataTypes.STRING,
@@ -30,10 +30,10 @@ const FollowUp = sequelize.define(
             allowNull: false,
         },
 
-        followUpDate: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
+        // followUpDate: {
+        //     type: DataTypes.DATE,
+        //     allowNull: true,
+        // },
 
         mode: {
             type: DataTypes.ENUM("Call", "Email", "Meeting", "Message", "WhatsApp", "Other"),
@@ -70,10 +70,10 @@ const FollowUp = sequelize.define(
         //     allowNull: true,
         // },
 
-        rejectionReason: {
-            type: DataTypes.TEXT,
-            allowNull: true,
-        },
+        // rejectionReason: {
+        //     type: DataTypes.TEXT,
+        //     allowNull: true,
+        // },
 
         // notifyAdmin: {
         //     type: DataTypes.BOOLEAN,    // Notify Admin 
@@ -85,10 +85,10 @@ const FollowUp = sequelize.define(
         //     allowNull: true, // userId
         // },
 
-        whatsappNumber: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        // whatsappNumber: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // },
         //  user ka response
         // response: {
         //     type: DataTypes.ENUM(
@@ -106,15 +106,15 @@ const FollowUp = sequelize.define(
             defaultValue: true
         },
 
-        createdBy: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
+        // createdBy: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true,
+        // },
 
-        quotations: {
-            type: DataTypes.ARRAY(DataTypes.STRING), // store uploaded file names
-            defaultValue: [],
-        },
+        // quotations: {
+        //     type: DataTypes.ARRAY(DataTypes.STRING), // store uploaded file names
+        //     defaultValue: [],
+        // },
 
         // updatedBy: {
         //     type: DataTypes.INTEGER,
