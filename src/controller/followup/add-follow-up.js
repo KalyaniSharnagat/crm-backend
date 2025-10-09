@@ -1,14 +1,18 @@
+const path = require("path");
+const { createFollowUpValidationSchema } = require("../../utils/validation/admin.validation");
 const followUpService = require("../../services/followup.service");
 const leadService = require("../../services/lead.service");
-const { createFollowUpValidationSchema } = require("../../utils/validation/admin.validation");
 
 const addFollowUp = async (request, response) => {
     try {
-        const { leadId, nextFollowUpDate, mode, followUpByName, status, callNumber } = request.body;
 
+        const file = request.file;
+
+        const folloupDetails = JSON.parse(request.body.folloupDetails);
+        const { leadId, nextFollowUpDate, followUpByName, remark, mode, status } = folloupDetails;
 
         const validationResult = await createFollowUpValidationSchema.validate(
-            { leadId, followUpDate, mode, status },
+            { leadId, nextFollowUpDate, followUpByName, remark, mode, status },
             { abortEarly: true }
         );
 
@@ -19,20 +23,6 @@ const addFollowUp = async (request, response) => {
             });
         }
 
-        if (nextFollowUpDate) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const nextDate = new Date(nextFollowUpDate);
-            nextDate.setHours(0, 0, 0, 0);
-
-            if (nextDate <= today) {
-                return response.status(400).json({
-                    status: "FAILED",
-                    message: "Next follow-up date must be a future date",
-                });
-            }
-        }
-
         const lead = await leadService.getLeadById(leadId);
         if (!lead) {
             return response.status(404).json({
@@ -41,40 +31,46 @@ const addFollowUp = async (request, response) => {
             });
         }
 
-        const isFollowUpExist = await followUpService.getFollowUpByLeadAndDate(leadId, followUpDate);
-        if (isFollowUpExist) {
-            return response.status(400).json({
+        const followUp = await followUpService.createFollowUp({
+            leadId,
+            nextFollowUpDate,
+            followUpByName,
+            remark,
+            mode,
+            status,
+        });
+
+        if (!followUp) {
+            return response.status(500).json({
                 status: "FAILED",
-                message: "Follow-up already exists for this Lead on the same date",
+                message: "Failed to create follow-up, please try again!",
             });
         }
 
-        // Validate status
-        const allowedStatus = ["Approved", "Rejected", "Pending"];
-        const finalStatus = status && allowedStatus.includes(status) ? status : "Pending";
+        let uploadedFileInfo = null;
+        if (file) {
+            uploadedFileInfo = {
+                fileUrl: path.join("public/followup", file.filename),
+                // Id: followUp.id,
+                // type: file.mimetype.startsWith("image/") ? "image" : "pdf",
+            };
 
-        const dataToInsert = {
-            leadId,
-            projectName: lead.projectName,
-            clientName: lead.name,
-            followUpByName,
-            followUpDate,
-            nextFollowUpDate,
-            mode,
-            callNumber,
-            status: finalStatus
-        };
-
-        const result = await followUpService.createFollowUp(dataToInsert);
+            // Save file info if needed in DB
+            if (followUpService.savefollowupImages) {
+                await followUpService.savefollowupImages([uploadedFileInfo]);
+            }
+        }
 
         return response.status(200).json({
             status: "SUCCESS",
             message: "Follow-up added successfully",
-            data: result,
+            data: {
+                followUp,
+                file: uploadedFileInfo,
+            },
         });
-
     } catch (error) {
-        console.error("Error adding follow-up:", error);
+        console.error("❌ Error adding follow-up:", error);
         return response.status(500).json({
             status: "FAILED",
             message: error.message,
